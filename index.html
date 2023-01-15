@@ -62,3 +62,42 @@ As the team left the planet, they knew that they had encountered something truly
   </div>
 </body>
 </html>
+
+// Define the directory to search for text files
+const directory = "./text-files/";
+
+// Use the fs module to read the directory
+const fs = require("fs");
+fs.readdir(directory, (err, files) => {
+  if (err) {
+    console.error("Error reading directory: ", err);
+    return;
+  }
+
+  // Filter the files to only include text files
+  const textFiles = files.filter((file) => file.endsWith(".txt"));
+
+  // Use a for loop to read the text in each text file
+  for (let i = 0; i < textFiles.length; i++) {
+    const fileName = textFiles[i];
+    const filePath = directory + fileName;
+    fs.readFile(filePath, "utf8", (err, fileText) => {
+      if (err) {
+        console.error(`Error reading file ${fileName}: `, err);
+        return;
+      }
+
+      // Use the file text to create a list of items
+      const fileLines = fileText.split("\n");
+      for (let j = 0; j < fileLines.length; j++) {
+        const line = fileLines[j];
+        // Create a list item for each line of text
+        const listItem = document.createElement("li");
+        listItem.innerText = line;
+        // Append the list item to a list on the page
+        document.getElementById("text-list").appendChild(listItem);
+      }
+    });
+  }
+});
+
