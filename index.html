@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Static HTML Page</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: "Courier New", Courier, monospace;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #ff0;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .terminal {
+            background-color: #000;
+            padding: 10px;
+            border: 1px solid #ff0;
+            white-space: pre-wrap;
+            overflow: auto;
+            position: relative;
+        }
+
+        .prompt {
+            color: #ff0;
+            display: inline-block;
+            float: left;
+            clear: both;
+        }
+
+        .cursor-container {
+            position: relative;
+            display: inline-block;
+            float: left;
+        }
+
+        .cursor {
+            animation: blink 0.8s step-end infinite;
+            height: 1em;
+            width: 0;
+            border-right: 2px solid #ff0;
+            margin-left: 4px;
+        }
+
+        @keyframes blink {
+            0% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Clean After forgetting .gitignore</h1>
+    <div class="terminal">
+        <pre>
+            <code>git rm -r --cached .
+            git add .
+            git commit -m "Drop files from .gitignore"</code>
+        </pre>
+    </div>
+
+    <!-- New text block -->
+    <div class="text-block">
+        <p>This is a new text block.</p>
+    </div>
+
+    <div class="prompt">root@blackmage:~$</div>
+    <div class="cursor-container">
+        <div class="cursor"></div>
+    </div>
+</body>
+</html>
