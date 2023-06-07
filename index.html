@@ -142,11 +142,30 @@ d----        07/06/2023      20:11                <span class="directory-name">ï
 
                 outputContainer.appendChild(output);
                 commandContainer.scrollIntoView(false);
+
+                // Update string dump in localStorage
+                const storedDump = localStorage.getItem('commandDump') || '';
+                const updatedDump = storedDump + command + '\n';
+                localStorage.setItem('commandDump', updatedDump);
             }
         });
 
         window.addEventListener('load', function() {
             commandInput.focus();
+
+            // Read string dump from localStorage and populate commands on page load
+            const storedDump = localStorage.getItem('commandDump') || '';
+            const commands = storedDump.split('\n');
+            commands.forEach(function(command) {
+                if (command) {
+                    const output = document.createElement('div');
+                    output.className = 'command-output';
+                    output.textContent = command;
+                    outputContainer.appendChild(output);
+                }
+            });
+
+            commandContainer.scrollIntoView(false);
         });
     </script>
 </body>
