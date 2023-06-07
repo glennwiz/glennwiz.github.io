@@ -60,6 +60,8 @@
             color: #ff0;
             border: none;
             outline: none;
+            padding: 5px;
+            margin-top: 10px;
             box-shadow: none;
         }
 
@@ -93,7 +95,7 @@
 
     <div class="prompt">root@blackmage:~$</div>
     <div class="cursor-container">
-        <!-- <div class="cursor"></div> --> 
+        <div class="cursor"></div>
     </div>
 
     <!-- Command input and output -->
@@ -112,7 +114,20 @@
 
                 const output = document.createElement('div');
                 output.className = 'command-output';
-                output.textContent = command;
+
+                if (command === 'ls') {
+                    const fileSystemListing = `Directory: C:\\dev\\BaseCounter
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+d----        07/06/2023     19:02                  pictures
+d----        07/06/2023     20:11                  secret`;
+
+                    output.textContent = fileSystemListing;
+                } else {
+                    output.textContent = command;
+                }
+
                 outputContainer.appendChild(output);
             }
         });
