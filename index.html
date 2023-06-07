@@ -66,8 +66,9 @@
             font-weight: bold;
         }
 
-        input[type="text"] {
+        #command-input {
             background-color: #000;
+            color: #ff0;
             border: none;
             outline: none;
         }
@@ -76,7 +77,7 @@
             0% {
                 opacity: 1;
             }
-             50% {
+            50% {
                 opacity: 0;
             }
             100% {
@@ -102,7 +103,7 @@
 
     <div class="prompt">root@blackmage:~$</div>
     <div class="cursor-container">
-       <!-- <div class="cursor"></div> -->
+        <!--<div class="cursor"></div>-->
     </div>
 
     <!-- Command input and output -->
@@ -128,8 +129,8 @@ Directory: /root/hidden/
 
 Mode         LastWriteTime         Length Name
 ----         -------------         ------ ----
-d----        07/06/2023     19:02                <span class="directory-name">  pictures</span>
-d----        07/06/2023     20:11                <span class="directory-name">  secret</span>`;
+d----        07/06/2023      19:02                <span class="directory-name">  pictures</span>
+d----        07/06/2023      20:11                <span class="directory-name">  secret</span>`;
 
                     output.innerHTML = fileSystemListing;
                 } else {
