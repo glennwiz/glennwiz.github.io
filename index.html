@@ -61,7 +61,8 @@
             border: none;
             outline: none;
             padding: 5px;
-            box-shadow: none; /* Add this line to remove the box-shadow */
+            margin-top: 10px;
+            box-shadow: none;
         }
 
         @keyframes blink {
@@ -116,6 +117,10 @@
                 output.textContent = command;
                 outputContainer.appendChild(output);
             }
+        });
+
+        window.addEventListener('load', function() {
+            commandInput.focus();
         });
     </script>
 </body>
