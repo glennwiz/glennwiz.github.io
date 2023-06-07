@@ -53,23 +53,24 @@
         .command-output {
             color: #0f0;
             margin-top: 10px;
+            white-space: pre;
         }
 
-        input[type="text"] {
-            background-color: #000;
+        .file-name {
             color: #ff0;
-            border: none;
-            outline: none;
-            padding: 5px;
-            margin-top: 10px;
-            box-shadow: none;
+            font-weight: bold;
+        }
+
+        .directory-name {
+            color: #0f0;
+            font-weight: bold;
         }
 
         @keyframes blink {
             0% {
                 opacity: 1;
             }
-            50% {
+             50% {
                 opacity: 0;
             }
             100% {
@@ -116,14 +117,15 @@
                 output.className = 'command-output';
 
                 if (command === 'ls') {
-                    const fileSystemListing = `Directory: C:\\dev\\BaseCounter
+                    const fileSystemListing = `
+Directory: /root/hidden/
 
-Mode                LastWriteTime         Length Name
-----                -------------         ------ ----
-d----        07/06/2023     19:02                  pictures
-d----        07/06/2023     20:11                  secret`;
+Mode         LastWriteTime         Length Name
+----         -------------         ------ ----
+d----        07/06/2023     19:02                <span class="directory-name">  pictures</span>
+d----        07/06/2023     20:11                <span class="directory-name">  secret</span>`;
 
-                    output.textContent = fileSystemListing;
+                    output.innerHTML = fileSystemListing;
                 } else {
                     output.textContent = command;
                 }
