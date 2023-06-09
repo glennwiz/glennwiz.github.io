@@ -161,6 +161,33 @@ Mode         LastWriteTime         Length Name
 
                 output.innerHTML = secretFilesListing;
             }
+
+            else if (command === 'ifconfig' || command === 'ipconfig') {
+                const ipInfo = `
+Windows IP Configuration
+
+
+Ethernet adapter Ethernet:
+
+   Connection-specific DNS Suffix  . : lan
+   IPv6 Address. . . . . . . . . . . : ee8c:0a0f:1782:0893:4cb7:1d74:ef66:8b5e
+   Temporary IPv6 Address. . . . . . : ee8c:0a0f:1782:0893:4cb7:1d74:ef66:8b5e
+   Temporary IPv6 Address. . . . . . : ee8c:0a0f:1782:0893:4cb7:1d74:ef66:8b5e
+   Link-local IPv6 Address . . . . . : ee8c:0a0f:1782:0893:4cb7:1d74:ef66:8b5e
+   IPv4 Address. . . . . . . . . . . : 185.53.177.52
+   Subnet Mask . . . . . . . . . . . : 255.255.255.0
+   Default Gateway . . . . . . . . . : 185.53.177.1
+
+Ethernet adapter vEthernet (WSL):
+
+   Connection-specific DNS Suffix  . :
+   Link-local IPv6 Address . . . . . : ee8c:0a0f:1782:0893:4cb7:1d74:ef66:8b5e
+   IPv4 Address. . . . . . . . . . . : 172.21.0.1
+   Subnet Mask . . . . . . . . . . . : 255.255.240.0
+   Default Gateway . . . . . . . . . :`;
+
+                output.innerHTML = ipInfo;
+            }
                 
                 else {
                     output.textContent = command;
