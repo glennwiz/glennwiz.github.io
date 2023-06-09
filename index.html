@@ -126,7 +126,11 @@
                 const output = document.createElement('div');
                 output.className = 'command-output';
 
-                if (command === 'ls') {
+                if (command === 'clear') {
+                    outputContainer.innerHTML = ''; // Clear the output container
+                }
+
+                else if (command === 'ls') {
                     const fileSystemListing = `
 Directory: /root/hidden/
 
