@@ -148,7 +148,7 @@
     -a---        07/06/2023      21:30       564KB topsecret_materials.pdf
     -a---        07/06/2023      21:32     1.2MB ufo_photo.png
     -a---        07/06/2023      21:35       876KB secret_photo.jpg
-    -a---        07/06/2023      21:38     2.3MB confidential_report.docx`;
+    -a---         07/06/2023      21:38     2.3MB confidential_report.docx`;
     
                         output.innerHTML = secretFilesListing;
                     } else if (command === 'ifconfig' || command === 'ipconfig') {
@@ -173,9 +173,70 @@
        Link-local IPv6 Address . . . . . : ee8c:0a0f:1782:0893:4cb7:1d74:ef66:8b5e
        IPv4 Address. . . . . . . . . . . : 172.21.0.1
        Subnet Mask . . . . . . . . . . . : 255.255.240.0
-       Default Gateway . . . . . . . . . :`;
+       Default Gateway . . . . . . . . . :
+    `;
     
                         output.innerHTML = ipInfo;
+                    } else if (command === 'lsblk') {
+                        const blockDevicesListing = `
+    NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+    sda      8:0    0   20G  0 disk 
+    └─sda1   8:1    0   20G  0 part /
+    sdb      8:16   0   50G  0 disk 
+    └─sdb1   8:17   0   50G  0 part /mnt/data
+    sdc      8:32   0  100G  0 disk 
+    `;
+    
+                        output.innerHTML = blockDevicesListing;
+                    } else if (command === 'top') {
+                        const processListing = `
+    top - 12:34:56 up 1 day, 2:30,  2 users,  load average: 0.08, 0.10, 0.12
+    Tasks: 197 total,   1 running, 196 sleeping,   0 stopped,   0 zombie
+    %Cpu(s):  1.5 us,  1.1 sy,  0.0 ni, 97.3 id,  0.0 wa,  0.0 hi,  0.1 si,  0.0 st
+    MiB Mem :   3953.1 total,    180.8 free,   3075.3 used,    697.0 buff/cache
+    MiB Swap:   1024.0 total,   1024.0 free,      0.0 used.    610.3 avail Mem 
+    
+      PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND                 
+        1 root      20   0  169516  11116   7828 S   0.0   0.3   0:06.16 init                    
+        2 root      20   0       0      0      0 S   0.0   0.0   0:00.02 kthreadd                
+        3 root      20   0       0      0      0 S   0.0   0.0   0:00.24 ksoftirqd/0             
+    `;
+    
+                        output.innerHTML = processListing;
+                    } else if (command === 'history') {
+                        const commandHistory = `
+       1  ls
+       2  cd secrets
+       3  ifconfig
+       4  lsblk
+       5  top
+       6  cat myfile.txt
+       7  cp file1.txt file2.txt
+       8  mv file.txt newdir/
+       9  mkdir newdir
+      10  rm myfile.txt
+    `;
+    
+                        output.innerHTML = commandHistory;
+                    } else if (command === 'help') {
+                        const availableCommands = `
+    Available Commands:
+    - ls: List files and directories.
+    - cd <directory>: Change the current directory.
+    - ifconfig: Display network configuration.
+    - ipconfig: Display network configuration.
+    - lsblk: List block devices.
+    - top: Display system processes.
+    - history: Show command history.
+    - cat <file>: Display the content of a file.
+    - cp <source> <destination>: Copy a file or directory.
+    - mv <source> <destination>: Move or rename a file or directory.
+    - mkdir <directory>: Create a new directory.
+    - rm <file>: Remove a file.
+    - help: Show available commands.
+    `;
+    
+                        output.innerHTML = availableCommands;
                     } else {
                         output.textContent = command;
                     }
@@ -191,6 +252,7 @@
             localStorage.clear(); // Clear command history on page load
             commandInput.focus();
         });
-    </script>    
+    </script>
+    
 </body>
 </html>
