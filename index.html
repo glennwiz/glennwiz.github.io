@@ -208,6 +208,7 @@ Ethernet adapter vEthernet (WSL):
         });
 
         window.addEventListener('load', function() {
+            localStorage.clear(); // Clear command history on page load
             commandInput.focus();
 
             // Read string dump from localStorage and populate commands on page load
