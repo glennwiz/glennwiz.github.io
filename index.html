@@ -136,7 +136,33 @@ d----        07/06/2023      19:02                <span class="directory-name">Ô
 d----        07/06/2023      20:11                <span class="directory-name">Ôêì  secret</span>`;
 
                     output.innerHTML = fileSystemListing;
-                } else {
+                }  else if (command === 'star') {
+                const starInfo = `
+O-type: Blue stars with surface temperatures between 30,000 to over 50,000 Kelvin. These are the hottest and some of the most massive stars.
+B-type: Blue-white stars with temperatures between 10,000 to 30,000 Kelvin.
+A-type: White or bluish-white stars with temperatures between 7,500 to 10,000 Kelvin.
+F-type: Yellow-white stars with temperatures between 6,000 to 7,500 Kelvin.
+G-type: Yellow stars, including our Sun, with temperatures between 5,200 to 6,000 Kelvin.
+K-type: Orange to red stars with temperatures between 3,700 to 5,200 Kelvin.
+M-type: Red stars with temperatures less than 3,700 Kelvin. These are the coolest and some of the smallest stars, but are the most abundant in the universe.`;
+
+                output.innerHTML = starInfo;
+                }
+                else if (command === 'cd secret') {
+                const secretFilesListing = `
+Directory: /root/hidden/secret/
+
+Mode         LastWriteTime         Length Name
+----         -------------         ------ ----
+-a---        07/06/2023      21:30       564KB topsecret_materials.pdf
+-a---        07/06/2023      21:32     1.2MB ufo_photo.png
+-a---        07/06/2023      21:35       876KB secret_photo.jpg
+-a---        07/06/2023      21:38     2.3MB confidential_report.docx`;
+
+                output.innerHTML = secretFilesListing;
+            }
+                
+                else {
                     output.textContent = command;
                 }
 
