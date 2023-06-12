@@ -95,6 +95,17 @@
             git commit -m "Drop files from .gitignore"</code>
         </pre>
     </div>
+    <div>
+       <p>
+          <sup>M</sup> represents carriage return. This diff means something removed a Unicode BOM from the beginning of the line and added a CR at the end.
+       </p>
+       <p>
+          The <sup>^</sup> symbol stands for Control, so <sup>^M</sup> means Ctrl+M.
+       </p>
+       <p>
+          To get from that to the actual ASCII character code, you take the base character and flip bit 6 (i.e. XOR with 64). For letters, that just means subtract 64. So, for example, <sup>^A</sup> is character code 1 (because A is 65). <sup>^M</sup> is 77 - 64 = 13 (because M is 77), which corresponds to carriage return in ASCII.
+       </p>
+    </div>
 
     <!-- Updated text block -->
     <div class="text-block">
