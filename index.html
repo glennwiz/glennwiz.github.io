@@ -263,6 +263,10 @@
                         const currentDirectory = '/root/hidden/';
                         output.textContent = currentDirectory;
                     }
+                    else if (command === 'whoami') {
+                        const player = 'root';
+                        output.textContent = player;
+                    }
                     else if (command.startsWith('touch')) {
                         const fileName = command.substring(6);
                         const newFile = document.createElement('span');
