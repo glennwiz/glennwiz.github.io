@@ -124,8 +124,7 @@
 
     <!-- Command input and output -->
     <div id="command-container">
-        <input type="text" id="command-input" />
-        
+        <input type="text" id="command-input" />        
     </div>
 
     <script>
@@ -320,8 +319,9 @@
                         output.textContent = command;
                     }
     
-                    outputContainer.appendChild(output); // Append output to the output container
-                }
+                    outputContainer.insertBefore(output, outputContainer.firstChild); // Insert output at the beginning of the output container
+                    outputContainer.scrollTop = 0; // Scroll to the top of the output container
+                }                
     
                 commandContainer.scrollIntoView(false);
             }
