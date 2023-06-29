@@ -299,9 +299,15 @@
     - mv <source> <destination>: Move or rename a file or directory.
     - mkdir <directory>: Create a new directory.
     - rm <file>: Remove a file.
+    - pwd: Print the current working directory.
+    - touch <file>: Create a new file.
+    - rm -rf <directory>: Remove a directory and its contents recursively.
+    - echo <message>: Print a message to the console.
+    - cd: Navigate to the parent directory.
+    - date: Display the current date and time.
+    - clear: Clear the console output.
     - help: Show available commands.
     `;
-    
                         output.innerHTML = availableCommands;
                     } else {
                         output.textContent = command;
