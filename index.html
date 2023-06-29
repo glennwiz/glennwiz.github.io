@@ -25,17 +25,36 @@
             position: relative;
         }
 
+        .terminal pre {
+        margin: 0;
+        }
+
+        .terminal code {
+            font-family: "Courier New", Courier, monospace;
+        }
+
+        .terminal sup {
+            font-size: 10px;
+            vertical-align: super;
+        }
+
+        .terminal .text-block {
+            color: rgba(0, 132, 255, 0.418);
+        }
+
         .prompt {
             color: #ff0;
             display: inline-block;
             float: left;
             clear: both;
+            margin-top: 10px;
         }
 
         .cursor-container {
             position: relative;
             display: inline-block;
             float: left;
+            margin-top: 10px;
         }
 
         .cursor {
