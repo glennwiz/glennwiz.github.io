@@ -319,7 +319,7 @@
                         output.textContent = command;
                     }
     
-                    outputContainer.insertBefore(output, outputContainer.firstChild); // Insert output at the beginning of the output container
+                    outputContainer.appendChild(output);
                     outputContainer.scrollTop = 0; // Scroll to the top of the output container
 
                     // Show terminal boxes when "git" command is typed
