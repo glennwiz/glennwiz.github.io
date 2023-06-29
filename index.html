@@ -327,7 +327,9 @@
                         Array.from(terminalDivs).forEach(div => {
                             div.style.display = 'block';
                         });
-                    } else {
+                    } 
+                    
+                    if (command.includes('git hide')) { 
                         Array.from(terminalDivs).forEach(div => {
                             div.style.display = 'none';
                         });
