@@ -321,6 +321,13 @@
     
                     outputContainer.insertBefore(output, outputContainer.firstChild); // Insert output at the beginning of the output container
                     outputContainer.scrollTop = 0; // Scroll to the top of the output container
+
+                    // Show terminal boxes when "git" command is typed
+                    if (command === 'git') {
+                        terminalBoxes.forEach(box => {
+                            box.style.display = 'block';
+                        });
+                    }
                 }                
     
                 commandContainer.scrollIntoView(false);
