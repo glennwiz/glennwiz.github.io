@@ -131,11 +131,11 @@
         const commandInput = document.getElementById('command-input');
         const outputContainer = document.getElementById('output-container');
         const commandContainer = document.getElementById('command-container');
-        const terminalBoxes = document.querySelectorAll('.terminal');
-       
-        // Hide terminal boxes initially
-        terminalBoxes.forEach(box => {
-            box.style.display = 'none';
+        const terminalDivs = document.getElementsByClassName('terminal');
+
+        // Hide terminal divs initially
+        Array.from(terminalDivs).forEach(div => {
+            div.style.display = 'none';
         });
 
         commandInput.addEventListener('keydown', function(event) {
@@ -322,10 +322,14 @@
                     outputContainer.appendChild(output);
                     outputContainer.scrollTop = 0; // Scroll to the top of the output container
 
-                    // Show terminal boxes when "git" command is typed
-                    if (command === 'git') {
-                        terminalBoxes.forEach(box => {
-                            box.style.display = 'block';
+                     // Show terminal divs when "git" command is typed
+                    if (command.includes('git')) {
+                        Array.from(terminalDivs).forEach(div => {
+                            div.style.display = 'block';
+                        });
+                    } else {
+                        Array.from(terminalDivs).forEach(div => {
+                            div.style.display = 'none';
                         });
                     }
                 }                
