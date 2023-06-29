@@ -234,6 +234,23 @@
     
                         output.innerHTML = commandHistory;
                     }
+                    else if (command === 'pwd') {
+                        const currentDirectory = '/root/hidden/';
+                        output.textContent = currentDirectory;
+                    }
+                    else if (command.startsWith('touch ')) {
+                        const fileName = command.substring(6);
+                        const newFile = document.createElement('span');
+                        newFile.textContent = fileName;
+                        output.appendChild(newFile);
+                    }
+                    else if (command.startsWith('rm -rf ')) 
+                    {
+                        const directoryName = command.substring(7);
+                        const deletedDirectory = document.createElement('span');
+                        deletedDirectory.textContent = directoryName + ' (deleted)';
+                        output.appendChild(deletedDirectory);
+                    }
                     else if (command.startsWith('echo ')) 
                     {
                         const message = command.substring(5);
