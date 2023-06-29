@@ -233,7 +233,19 @@
     `;
     
                         output.innerHTML = commandHistory;
-                    } else if (command === 'help') {
+                    }
+                    else if (command.startsWith('echo ')) 
+                    {
+                        const message = command.substring(5);
+                        output.textContent = message;
+                    }
+ 
+                    else if (command === 'date') 
+                    {
+                        const currentDate = new Date().toLocaleString();
+                        output.textContent = currentDate;
+                    }                    
+                    else if (command === 'help') {
                         const availableCommands = `
     Available Commands:
     - ls: List files and directories.
@@ -256,7 +268,7 @@
                         output.textContent = command;
                     }
     
-                    outputContainer.insertBefore(output, outputContainer.firstChild); // Insert output at the beginning
+                    outputContainer.appendChild(output); // Append output to the output container
                 }
     
                 commandContainer.scrollIntoView(false);
@@ -268,6 +280,7 @@
             commandInput.focus();
         });
     </script>
+    
     
 </body>
 </html>
