@@ -109,15 +109,13 @@
     <h1>Clean After forgetting .gitignore</h1>
     
     <div class="terminal">
-        <pre>
-            <code>git rm -r --cached .
+      <code>git rm -r --cached .
             git add .
-            git commit -m "Drop files from .gitignore"</code>
-        </pre>
+            git commit -m "Drop files from .gitignore"
+        </code>     
     </div>
-    <div class="terminal">
-          <pre>
-            <code>
+    <div class="terminal">         
+        <code>
           <sup>M</sup> represents carriage return. This diff means something removed a Unicode BOM from the beginning of the line and added a CR at the end.      
           The <sup>^</sup> symbol stands for Control, so <sup>^M</sup> means Ctrl+M.      
           To get from that to the actual ASCII character code, you take the base character and flip bit 6 (i.e. XOR with 64). 
@@ -127,8 +125,7 @@
             Set windows style:
             git config --global core.autocrlf true
             git config --global core.eol crlf
-            </code>
-          </pre>  
+        </code>          
     </div>
 
     <!-- Updated text block -->
