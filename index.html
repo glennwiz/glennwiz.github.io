@@ -238,13 +238,13 @@
                         const currentDirectory = '/root/hidden/';
                         output.textContent = currentDirectory;
                     }
-                    else if (command.startsWith('touch ')) {
+                    else if (command.startsWith('touch')) {
                         const fileName = command.substring(6);
                         const newFile = document.createElement('span');
                         newFile.textContent = fileName;
                         output.appendChild(newFile);
                     }
-                    else if (command.startsWith('rm -rf ')) 
+                    else if (command.startsWith('rm -rf')) 
                     {
                         const directoryName = command.substring(7);
                         const deletedDirectory = document.createElement('span');
@@ -256,7 +256,29 @@
                         const message = command.substring(5);
                         output.textContent = message;
                     }
- 
+                    else if (command.startsWith('mkdir ')) {
+                        const directoryName = command.substring(6);
+                        const newDirectory = document.createElement('span');
+                        newDirectory.textContent = directoryName + '/';
+                        output.appendChild(newDirectory);
+                    }
+                    else if (command === 'cd ..') {
+                        const currentDirectory = document.createElement('span');
+                        currentDirectory.textContent = '../';
+                        output.appendChild(currentDirectory);
+                    }
+                    else if (command.startsWith('cat ')) {
+                        const fileName = command.substring(4);
+                        const fileContent = 'This is the content of ' + fileName;
+                        output.textContent = fileContent;
+                    }
+                    else if (command.startsWith('mv ')) {
+                        const args = command.split(' ');
+                        const source = args[1];
+                        const destination = args[2];
+                        const moveMessage = `Moved ${source} to ${destination}`;
+                        output.textContent = moveMessage;
+                    }
                     else if (command === 'date') 
                     {
                         const currentDate = new Date().toLocaleString();
@@ -296,8 +318,6 @@
             localStorage.clear(); // Clear command history on page load
             commandInput.focus();
         });
-    </script>
-    
-    
+    </script> 
 </body>
 </html>
