@@ -88,6 +88,7 @@
 </head>
 <body>
     <h1>Clean After forgetting .gitignore</h1>
+    
     <div class="terminal">
         <pre>
             <code>git rm -r --cached .
@@ -115,7 +116,7 @@
     <div class="text-block">
         <p style="color: rgba(0, 132, 255, 0.418);">This government server contains highly classified UFO data. Unauthorized access is strictly prohibited.</p>
     </div>
-
+    <div id="output-container"></div>
     <div class="prompt">root@blackmage:~$</div>
     <div class="cursor-container">
         <!--<div class="cursor"></div>-->
@@ -124,14 +125,20 @@
     <!-- Command input and output -->
     <div id="command-container">
         <input type="text" id="command-input" />
-        <div id="output-container"></div>
+        
     </div>
 
     <script>
         const commandInput = document.getElementById('command-input');
         const outputContainer = document.getElementById('output-container');
         const commandContainer = document.getElementById('command-container');
-    
+        const terminalBoxes = document.querySelectorAll('.terminal');
+       
+        // Hide terminal boxes initially
+        terminalBoxes.forEach(box => {
+            box.style.display = 'none';
+        });
+
         commandInput.addEventListener('keydown', function(event) {
             if (event.key === 'Enter') {
                 event.preventDefault();
@@ -283,7 +290,7 @@
                     {
                         const currentDate = new Date().toLocaleString();
                         output.textContent = currentDate;
-                    }                    
+                    }                                     
                     else if (command === 'help') {
                         const availableCommands = `
     Available Commands:
