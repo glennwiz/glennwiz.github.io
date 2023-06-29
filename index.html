@@ -105,15 +105,17 @@
     </style>
 </head>
 <body>
-    <h1>Clean After forgetting .gitignore</h1>
     
     <div class="terminal">
-      <code>git rm -r --cached .
+        <h2>Clean After forgetting .gitignore</h1>    
+        <code>
+            git rm -r --cached .
             git add .
             git commit -m "Drop files from .gitignore"
         </code>     
     </div>
-    <div class="terminal">         
+    <div class="terminal"> 
+        <h2>What is the meaning of ^M in 'git diff'?</h1>            
         <code>
           <sup>M</sup> represents carriage return. This diff means something removed a Unicode BOM from the beginning 
           of the line and added a CR at the end.      
@@ -127,6 +129,17 @@
             git config --global core.eol crlf
         </code>          
     </div>
+    <div class="terminal"> 
+        <h2>Practical uses of git reset --soft?</h1>            
+        <code>
+            # Move the HEAD, and just the HEAD, one commit back!
+            git reset --soft HEAD^
+
+            # Move the HEAD, and just the HEAD, two commits back!
+            git reset --soft HEAD^^
+        </code>          
+    </div>
+
 
     <!-- Updated text block -->
     <div class="text-block">
