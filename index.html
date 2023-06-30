@@ -6,49 +6,7 @@
 </head>
 <body>
     
-    <div class="terminal">
-        <h2>Clean After forgetting .gitignore</h2>    
-        <code>
-            git rm -r --cached .
-            git add .
-            git commit -m "Drop files from .gitignore"
-        </code>     
-    </div>
-    <div class="terminal"> 
-        <h2>What is the meaning of ^M in 'git diff'?</h2>            
-        <code>
-          <sup>M</sup> represents carriage return. This diff means something removed a Unicode BOM from the beginning 
-          of the line and added a CR at the end.      
-          The <sup>^</sup> symbol stands for Control, so <sup>^M</sup> means Ctrl+M.      
-          To get from that to the actual ASCII character code, you take the base character and flip bit 6 (i.e. XOR with 64). 
-          For letters, that just means subtract 64. So, for example, <sup>^A</sup> is character code 1 (because A is 65). 
-          <sup>^M</sup> is 77 - 64 = 13 (because M is 77), which corresponds to carriage return in ASCII.
-       
-            Set windows style:
-            git config --global core.autocrlf true
-            git config --global core.eol crlf
-        </code>          
-    </div>
-    <div class="terminal"> 
-        <h2>Practical uses of git reset --soft?</h2>            
-        <code>
-            # Move the HEAD, and just the HEAD, one commit back!
-            git reset --soft HEAD^
-
-            # Move the HEAD, and just the HEAD, two commits back!
-            git reset --soft HEAD^^
-        </code>          
-    </div>
-    <div class="terminal"> 
-        <h2>Origin</h2>            
-        <code>
-            # Get list of locations
-            git remote -v
-
-            # Change the Origin
-            git remote set-url origin https://git-repo/new-repository.git
-        </code>          
-    </div>
+    
 
     <div id="ascii-container">
         <pre class="ascii-art">
@@ -88,6 +46,49 @@
     <div class="prompt">root@blackmage:~$</div>
     <div class="cursor-container">
         <!--<div class="cursor"></div>-->
+    </div>
+    <div class="terminal">
+        <h2>Clean After forgetting .gitignore</h2>
+        <code>
+            git rm -r --cached .
+            git add .
+            git commit -m "Drop files from .gitignore"
+        </code>
+    </div>
+    <div class="terminal">
+        <h2>What is the meaning of ^M in 'git diff'?</h2>
+        <code>
+            <sup>M</sup> represents carriage return. This diff means something removed a Unicode BOM from the beginning
+            of the line and added a CR at the end.
+            The <sup>^</sup> symbol stands for Control, so <sup>^M</sup> means Ctrl+M.
+            To get from that to the actual ASCII character code, you take the base character and flip bit 6 (i.e. XOR with 64).
+            For letters, that just means subtract 64. So, for example, <sup>^A</sup> is character code 1 (because A is 65).
+            <sup>^M</sup> is 77 - 64 = 13 (because M is 77), which corresponds to carriage return in ASCII.
+
+            Set windows style:
+            git config --global core.autocrlf true
+            git config --global core.eol crlf
+        </code>
+    </div>
+    <div class="terminal">
+        <h2>Practical uses of git reset --soft?</h2>
+        <code>
+            # Move the HEAD, and just the HEAD, one commit back!
+            git reset --soft HEAD^
+
+            # Move the HEAD, and just the HEAD, two commits back!
+            git reset --soft HEAD^^
+        </code>
+    </div>
+    <div class="terminal">
+        <h2>Origin</h2>
+        <code>
+            # Get list of locations
+            git remote -v
+
+            # Change the Origin
+            git remote set-url origin https://git-repo/new-repository.git
+        </code>
     </div>
 
     <!-- Command input and output -->
