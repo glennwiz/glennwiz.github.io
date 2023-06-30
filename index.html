@@ -117,29 +117,41 @@
                 } else {
                     const output = document.createElement('div');
                     output.className = 'command-output';
-    
+
                     if (command === 'ls') {
                         const fileSystemListing = `
-    Directory: /root/hidden/
-    
-    Mode         LastWriteTime         Length Name
-    ----         -------------         ------ ----
-    d----        07/06/2023      19:02                <span class="directory-name">  pictures</span>
-    d----        07/06/2023      20:11                <span class="directory-name">  secret</span>`;
-    
+Directory: /root/hidden/
+
+Mode         LastWriteTime         Length Name
+----         -------------         ------ ----
+d----        07/06/2023      19:02                <span class="directory-name">  pictures</span>
+d----        07/06/2023      20:11                <span class="directory-name">  secret</span>`;
+
                         output.innerHTML = fileSystemListing;
                     } else if (command === 'cd secret') {
                         const secretFilesListing = `
-    Directory: /root/hidden/secret/
-    
-    Mode         LastWriteTime             Length    Name
-    ----         -------------             ------    ----
-    -a---        07/06/2023      21:30     564KB     topsecret_materials.pdf
-    -a---        07/06/2023      21:32     1.2MB     ufo_photo.png
-    -a---        07/06/2023      21:35     876KB     secret_photo.jpg
-    -a---        07/06/2023      21:38     2.3MB     confidential_report.docx`;
-    
+Directory: /root/hidden/secret/
+
+Mode         LastWriteTime             Length    Name
+----         -------------             ------    ----
+-a---        07/06/2023      21:30     564KB     topsecret_materials.pdf
+-a---        07/06/2023      21:32     1.2MB     ufo_photo.png
+-a---        07/06/2023      21:35     876KB     secret_photo.jpg
+-a---        07/06/2023      21:38     2.3MB     confidential_report.docx`;
+
                         output.innerHTML = secretFilesListing;
+                    } else if (command === 'cd pictures') {
+                        const picturesListing = `
+Directory: /root/hidden/pictures/
+
+Mode         LastWriteTime             Length     Name
+----         -------------             ------     ----
+-a---        07/06/2023      22:00     1.5MB     alien_world.jpg
+-a---        07/06/2023      22:05     1.8MB     david_grush_hidden.png
+-a---        07/06/2023      22:10     2.1MB     whistleblower.jpg
+-a---        07/06/2023      22:15     2.5MB     proxima_prof.png`;
+
+                        output.innerHTML = picturesListing;
                     } else if (command === 'ifconfig' || command === 'ipconfig') {
                         const ipInfo = `
     Windows IP Configuration
@@ -204,6 +216,7 @@
        8  mv file.txt newdir/
        9  mkdir newdir
       10  rm myfile.txt
+      11  ssh root@185.53.177.52 -p 22 -i id_rsa -o StrictHostKeyChecking=no -password '3treaE$1£'
     `;
     
                         output.innerHTML = commandHistory;
