@@ -47,6 +47,11 @@
     <div class="cursor-container">
         <!--<div class="cursor"></div>-->
     </div>
+        <!-- Command input and output -->
+    <div id="command-container">
+        <input type="text" id="command-input" />        
+    </div>
+
     <div class="terminal">
         <h2>Clean After forgetting .gitignore</h2>
         <code>
@@ -97,12 +102,6 @@
             git remote set-url origin https://git-repo/new-repository.git
         </code>
     </div>
-
-    <!-- Command input and output -->
-    <div id="command-container">
-        <input type="text" id="command-input" />        
-    </div>
-
     <script>
         const commandInput = document.getElementById('command-input');
         const outputContainer = document.getElementById('output-container');
