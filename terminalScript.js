@@ -271,6 +271,7 @@ commandInput.addEventListener('keydown', function(event) {
 
             // Show terminal divs when "git" command is typed
             if (command.includes('git')) {
+                outputContainer.innerHTML = ''; // Clear the output container
                 Array.from(terminalDivs).forEach(div => {
                     div.style.display = 'block';
                 });
