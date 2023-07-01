@@ -120,7 +120,6 @@ d----        07/06/2023      20:11                <span class="directory-name">ï
                     is8bitBlockVisible = false;   // update our flag
                 }
             }
-            else 
             else if (command === 'cat readme.txt') {
                 const readmeContent = `
       This is the readme file for the deep secrets. 
