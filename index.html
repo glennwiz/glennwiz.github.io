@@ -7,7 +7,7 @@
 <body>
 
 
-<div id="alienBlock" style="display: none;">
+<div id="alienBlock" style="display: block;">
     <div id="ascii-container">
         <pre class="ascii-art">
             .     .       .  .   . .   .   . .    +  .
@@ -162,6 +162,7 @@
         const terminalDivs = document.getElementsByClassName('terminal');
 
         let isAlienBlockVisible = false;
+        let is8bitBlockVisible = false;
         
         // Hide terminal divs initially
         Array.from(terminalDivs).forEach(div => {
@@ -199,7 +200,16 @@ d----        07/06/2023      20:11                <span class="directory-name">ï
                             element.style.display = 'none';// hide it,
                             isAlienBlockVisible = false;   // update our flag
                         }
-                    } 
+                    } else if (command === '8bit') {
+                        var element = document.getElementById('8bitMageBlock');
+                        if (!is8bitBlockVisible) {       // if the block is not visible
+                            element.style.display = '';    // make it visible
+                            is8bitBlockVisible = true;    // update our flag
+                        } else {                           // if the block is already visible
+                            element.style.display = 'none';// hide it,
+                            is8bitBlockVisible = false;   // update our flag
+                        }
+                    }
                     else if (command === 'cd secret') {
                         const secretFilesListing = `
 Directory: /root/hidden/secret/
