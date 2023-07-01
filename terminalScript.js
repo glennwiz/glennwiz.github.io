@@ -11,7 +11,7 @@ Array.from(terminalDivs).forEach(div => {
     div.style.display = 'none';
 });
 
-/ Let's create a simple file system structure
+// Let's create a simple file system structure
 let fileSystem = {
     root: {
         pictures: {},
