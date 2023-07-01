@@ -59,7 +59,33 @@ d----        07/06/2023      20:11                <span class="directory-name">ï
                 }
 
                 output.innerHTML = fileSystemListing;
-            }else if (command === 'alien') {
+            }else if (command === 'repo') {
+                fetch('https://api.github.com/users/glennwiz/repos') // Fetch repositories from GitHub API
+                    .then(response => response.json()) // Parse the JSON from the API
+                    .then(repos => {
+                        console.log(repos); // Print the repositories to the console
+                        repos.forEach(repo => {
+                            console.log(repo.name); // Print each repo name
+                        });
+
+                        let ul = document.createElement('ul');
+
+                        repos.forEach(repo => {
+                            let li = document.createElement('li');
+                            let anchor = document.createElement('a');
+                            anchor.href = repo.html_url;
+                            anchor.target = "_blank";
+                            anchor.rel = "noopener noreferrer";
+                            anchor.textContent = repo.name;
+                            li.appendChild(anchor);
+                            ul.appendChild(li);
+                        });
+
+// Append the ul element to your document or a specific element. Here we are appending to document body
+                        document.body.appendChild(ul);
+                    });
+            }            
+            else if (command === 'alien') {
                 var element = document.getElementById('alienBlock');
                 if (!isAlienBlockVisible) {       // if the block is not visible
                     element.style.display = '';    // make it visible
