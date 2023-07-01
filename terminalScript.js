@@ -203,8 +203,7 @@ d----        07/06/2023      20:11                <span class="directory-name">ï
 
                 output.innerHTML = commandHistory;
             }
-            else if (command === 'pwd') {
-                const currentDirectory = '/root/hidden/';
+            else if (command === 'pwd') {                
                 output.textContent = currentDirectory;
             }
             else if (command === 'whoami') {
