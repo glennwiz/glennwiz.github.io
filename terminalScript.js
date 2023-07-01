@@ -35,13 +35,28 @@ commandInput.addEventListener('keydown', function(event) {
             output.className = 'command-output';
 
             if (command === 'ls') {
-                const fileSystemListing = `
-    Directory: /root/hidden/
-    
-    Mode         LastWriteTime         Length Name
-    ----         -------------         ------ ----
-    d----        07/06/2023      19:02                <span class="directory-name">  pictures</span>
-    d----        07/06/2023      20:11                <span class="directory-name">  secret</span>`;
+                let fileSystemListing = `
+Directory: /root/hidden/
+
+Mode         LastWriteTime         Length Name
+----         -------------         ------ ----
+d----        07/06/2023      19:02                <span class="directory-name">  pictures</span>
+d----        07/06/2023      20:11                <span class="directory-name">  secret</span>`;
+
+                if (currentDirectory === 'secret' || currentDirectory === 'secrets') {
+                    const secretFilesListing = `
+    Directory: /root/hidden/secret/
+
+    Mode         LastWriteTime             Length    Name
+    ----         -------------             ------    ----
+    -a---        07/06/2023      21:30     564KB     topsecret_materials.pdf
+    -a---        07/06/2023      21:32     1.2MB     ufo_photo.png
+    -a---        07/06/2023      21:35     876KB     secret_photo.jpg
+    -a---        07/06/2023      21:38     2.3MB     confidential_report.docx
+    -a---        07/06/2023      23:33     0.1MB     readme.txt`;
+
+                    fileSystemListing = secretFilesListing;
+                }
 
                 output.innerHTML = fileSystemListing;
             }else if (command === 'alien') {
