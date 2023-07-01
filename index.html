@@ -166,11 +166,22 @@
             Array.from(terminalDivs).forEach(div => {
                 div.style.display = 'none';
             });
+
+            / Let's create a simple file system structure
+            let fileSystem = {
+                root: {
+                    pictures: {},
+                    secret: {}
+                }
+            };
+
+            let currentDirectory = 'root';
     
             commandInput.addEventListener('keydown', function(event) {
                 if (event.key === 'Enter') {
                     event.preventDefault();
-                    const command = commandInput.value;
+                    const commandParts = commandInput.value.split(' ');
+                    const command = commandParts[0];
                     commandInput.value = '';
         
                     if (command === 'clear') {
@@ -347,16 +358,23 @@
                             const message = command.substring(5);
                             output.textContent = message;
                         }
-                        else if (command.startsWith('mkdir ')) {
-                            const directoryName = command.substring(6);
-                            const newDirectory = document.createElement('span');
-                            newDirectory.textContent = directoryName + '/';
-                            output.appendChild(newDirectory);
+                        else if (command === 'cd') {
+                            const newDirectory = commandParts[1];
+                            if (newDirectory in fileSystem[currentDirectory]) {
+                                currentDirectory = newDirectory;
+                                output.textContent = 'Changed directory to ' + newDirectory;
+                            } else {
+                                output.textContent = 'No such directory: ' + newDirectory;
+                            }
                         }
-                        else if (command === 'cd ..') {
-                            const currentDirectory = document.createElement('span');
-                            currentDirectory.textContent = '../';
-                            output.appendChild(currentDirectory);
+                        else if (command === 'mkdir') {
+                            const newDirectory = commandParts[1];
+                            if (!(newDirectory in fileSystem[currentDirectory])) {
+                                fileSystem[currentDirectory][newDirectory] = {};
+                                output.textContent = 'Created new directory: ' + newDirectory;
+                            } else {
+                                output.textContent = 'Directory already exists: ' + newDirectory;
+                            }
                         }
                         else if (command.startsWith('cat ')) {
                             const fileName = command.substring(4);
