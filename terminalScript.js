@@ -57,6 +57,22 @@ d----        07/06/2023      20:11                <span class="directory-name">ï
 
                     fileSystemListing = secretFilesListing;
                 }
+                if(currentDirectory === 'pictures') {
+                             
+                        const picturesListing = `
+    Directory: /root/hidden/pictures/
+    
+    Mode         LastWriteTime             Length     Name
+    ----         -------------             ------     ----
+    -a---        07/06/2023      22:00     1.5MB     alien_world.jpg
+    -a---        07/06/2023      22:05     1.8MB     david_grush_hidden.png
+    -a---        07/06/2023      22:10     2.1MB     whistleblower.jpg
+    -a---        07/06/2023      22:15     2.5MB     proxima_prof.png
+    -a---        07/06/2023      23:33     0.1MB     readme.txt
+    `;
+
+                        output.innerHTML = picturesListing;  
+                }
 
                 output.innerHTML = fileSystemListing;
             }else if (command === 'repo') {
@@ -104,37 +120,7 @@ d----        07/06/2023      20:11                <span class="directory-name">ï
                     is8bitBlockVisible = false;   // update our flag
                 }
             }
-            else if (command === 'cd secret') {
-                const secretFilesListing = `
-    Directory: /root/hidden/secret/
-    
-    Mode         LastWriteTime             Length    Name
-    ----         -------------             ------    ----
-    -a---        07/06/2023      21:30     564KB     topsecret_materials.pdf
-    -a---        07/06/2023      21:32     1.2MB     ufo_photo.png
-    -a---        07/06/2023      21:35     876KB     secret_photo.jpg
-    -a---        07/06/2023      21:38     2.3MB     confidential_report.docx
-    -a---        07/06/2023      23:33     0.1MB     readme.txt
-    
-    `;
-
-
-                output.innerHTML = secretFilesListing;
-            } else if (command === 'cd pictures') {
-                const picturesListing = `
-    Directory: /root/hidden/pictures/
-    
-    Mode         LastWriteTime             Length     Name
-    ----         -------------             ------     ----
-    -a---        07/06/2023      22:00     1.5MB     alien_world.jpg
-    -a---        07/06/2023      22:05     1.8MB     david_grush_hidden.png
-    -a---        07/06/2023      22:10     2.1MB     whistleblower.jpg
-    -a---        07/06/2023      22:15     2.5MB     proxima_prof.png
-    -a---        07/06/2023      23:33     0.1MB     readme.txt
-    `;
-
-                output.innerHTML = picturesListing;
-            }
+            else 
             else if (command === 'cat readme.txt') {
                 const readmeContent = `
       This is the readme file for the deep secrets. 
