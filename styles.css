@@ -5,6 +5,14 @@ body {
   padding: 20px;
 }
 
+a {
+  color: #bd9c67;
+}
+
+a:visited {
+  color: #30756f;
+}
+
 h1 {
   color: #ff0;
   font-size: 24px;
