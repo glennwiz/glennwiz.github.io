@@ -1,9 +1,21 @@
 ﻿const output = document.createElement('div');
 output.className = 'command-output';
+const outputContainer = document.getElementById('output-container');
+outputContainer.appendChild(output);
 let isAlienBlockVisible = false;
 let is8bitBlockVisible = false;
 
 let currentDirectory = 'root';
+
+function appendToOutput(content, isHTML = false) {
+    const elem = document.createElement('div');
+    if (isHTML) {
+        elem.innerHTML = content;
+    } else {
+        elem.textContent = content;
+    }
+    output.append(elem);
+}
 
 export class LsCommand {
     constructor() {
@@ -11,6 +23,7 @@ export class LsCommand {
     }
     
     execute() {
+        console.log('ls    - - - - -  -');
         let fileSystemListing = `
 Directory: /root/hidden/
 
@@ -60,11 +73,8 @@ export class CatCommand {
     }
 
     execute()  {
-        const fileName = command.substring(4);
-        const fileContent = 'This is the content of ' + fileName;
-        output.textContent = fileContent;
 
-        /Need to print out the content of the file this is the readme.txt file
+        //Need to print out the content of the file this is the readme.txt file
         //need to implement the cat command
 
         const readmeContent = `
@@ -88,7 +98,8 @@ export class CdCommand {
 
     execute()  {
         console.log('cd');
-        const newDirectory = commandParts[1];
+        const newDirectory = args[1];
+        console.log('new directory: ' + newDirectory)
         if (newDirectory in fileSystem[currentDirectory]) {
             currentDirectory = newDirectory;
             console.log('new current directory: ' + currentDirectory);
@@ -298,7 +309,7 @@ export class PwdCommand {
     }
 
     execute()  {
-        output.textContent = currentDirectory;
+        appendToOutput(currentDirectory);
     }
 }
 
@@ -412,21 +423,22 @@ export const commands = {
     cd: new CdCommand(),
     mkdir: new MkdirCommand(),
     repo: new RepoCommand(),
-    ClearCommand: new ClearCommand(),
-    AlienCommand: new AlienCommand(),
-    EightBitCommand: new EightBitCommand(),
-    IfconfigCommand: new IfconfigCommand(),
-    LsblkCommand: new LsblkCommand(),
-    TopCommand: new TopCommand(),
-    HistoryCommand: new HistoryCommand(),
-    PwdCommand: new PwdCommand(),
-    WhoamiCommand: new WhoamiCommand(),
-    TouchCommand: new TouchCommand(),
-    RmCommand: new RmCommand(),    
-    EchoCommand: new EchoCommand(),   
-    MvCommand: new MvCommand(),   
-    DateCommand: new DateCommand(),
-    HelpCommand: new HelpCommand()        
+    clear: new ClearCommand(),
+    alien: new AlienCommand(),
+    aitbit: new EightBitCommand(),
+    ifconfig: new IfconfigCommand(),
+    ipconfig: new IfconfigCommand(),
+    lsblk: new LsblkCommand(),
+    top: new TopCommand(),
+    history: new HistoryCommand(),
+    pwd: new PwdCommand(),
+    whoami: new WhoamiCommand(),
+    touch: new TouchCommand(),
+    rm: new RmCommand(),    
+    echo: new EchoCommand(),   
+    mv: new MvCommand(),   
+    date: new DateCommand(),
+    help: new HelpCommand()
 };   
 
    
