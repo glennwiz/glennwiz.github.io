@@ -73,7 +73,7 @@ h1 {
 
 .command-output {
   color: #ff0;
-  margin-top: 10px;
+  margin-top: -2px;
   white-space: pre;
 }
 
@@ -97,7 +97,7 @@ h1 {
 
 #ascii-container {
   text-align: left;
-  margin-top: 20px; /* Adjust the margin top as needed */
+  margin-top:  13px; /* Adjust the margin top as needed */
 }
 
 .ascii-art {

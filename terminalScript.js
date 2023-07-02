@@ -5,8 +5,8 @@ const outputContainer = document.getElementById('output-container');
 const commandContainer = document.getElementById('command-container');
 const terminalDivs = document.getElementsByClassName('terminal');
 
-let isAlienBlockVisible = false;
-let is8bitBlockVisible = false;
+export let isAlienBlockVisible = false;
+export let is8bitBlockVisible = false;
 
 // Hide terminal divs initially
 Array.from(terminalDivs).forEach(div => {
@@ -14,14 +14,7 @@ Array.from(terminalDivs).forEach(div => {
 });
 
 // Let's create a simple file system structure
-let fileSystem = {
-    root: {
-        pictures: {},
-        secret: {}
-    }
-};
 
-let currentDirectory = 'root';
 
 commandInput.addEventListener('keydown', function(event) {
     if (event.key === 'Enter') {
@@ -34,9 +27,13 @@ commandInput.addEventListener('keydown', function(event) {
         console.log(commands)
         if(command in commands) {
             console.log('Command found');
-            commands[command].execute(args); //todo: are we passing args?
+            commands[command].execute(args);
+            commandInput.focus()
+            commandContainer.scrollIntoView(false);
         } else {
             console.log(`Unknown command: ${command}`);
+            commandInput.focus()
+            commandContainer.scrollIntoView(false);
         }
     }
 });
