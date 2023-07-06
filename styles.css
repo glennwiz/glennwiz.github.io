@@ -20,11 +20,26 @@ h1 {
 }
 
 .terminal {
-  background-color: #000;
-  border: 1px solid #ff0;
+  background: #202020;
+  border-radius: 5px;
+  padding: 30px;
+  color: #ffffff;
+  margin-bottom: 15px;
+}
+.terminal h2 {
+  color: #fcfcfc;
+  border-bottom: 1px solid #fcfcfc;
+  padding-bottom: 10px;
+}
+
+.terminal code {
+  display: block;
   white-space: pre-wrap;
-  overflow: auto;
-  position: relative;
+  color: #00BFFF;
+}
+
+.terminal code span.command {
+  color: #4CD964;
 }
 
 .terminal pre {

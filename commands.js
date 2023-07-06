@@ -6,7 +6,149 @@ outputContainer.appendChild(output);
 import { isAlienBlockVisible } from './terminalScript.js';
 import { is8bitBlockVisible } from './terminalScript.js';
 
-let currentDirectory = 'hidden';
+let currentDirectory = ["hidden"];
+
+function findFolder(obj, folderName) {
+    console.log("----Searching for folder: ", folderName);
+    console.log(obj)
+    if(obj.name === folderName){
+        console.log("1----Folder Found: ", obj);
+        return obj;
+    }
+
+    for(let i=0; i<obj.folders.length; i++){
+        let found = findFolder(obj.folders[i], folderName);
+        if(found) {
+            console.log("2---->Folder Found: ", found);
+            return found;
+        }
+    }
+    console.log("9999---->-Folder not found");
+    return null;
+}
+
+let fileSystem = {
+    name: "root",
+    mode: "rw-r--r--",
+    lastWriteTime: "2023-01-03 10:13",
+    length: 12354,
+    files: [
+        {
+            mode: "rw-r--r--",
+            lastWriteTime: "2023-01-03 10:13",
+            length: 12354,
+            name: "file1.txt"
+        },
+        {
+            mode: "rw-r--r--",
+            lastWriteTime: "2023-01-05 14:15",
+            length: 765,
+            name: "file2.png"
+        },
+    ],
+    folders: [
+        {
+            name: "hidden",
+            mode: "rw-r--r--",
+            lastWriteTime: "2023-01-03 10:13",
+            length: 12354,
+            files: [
+                {
+                    mode: "rw-r--r--",
+                    lastWriteTime: "2023-01-06 04:23",
+                    length: 56123,
+                    name: "secret_readme.txt"
+                },                
+            ],
+            folders: [
+                {
+                    mode: "rw-r--r--",
+                    lastWriteTime: "2023-01-03 10:13",
+                    length: null,
+                    name : "pictures",
+                    "files": [
+                        {
+                            "mode": "-a---",
+                            "lastWriteTime": "07/06/2023 22:00",
+                            "length": "1.5MB",
+                            "name": "alien_world.jpg"
+                        },
+                        {
+                            "mode": "-a---",
+                            "lastWriteTime": "07/06/2023 22:05",
+                            "length": "1.8MB",
+                            "name": "david_grush_hidden.png"
+                        },
+                        {
+                            "mode": "-a---",
+                            "lastWriteTime": "07/06/2023 22:10",
+                            "length": "2.1MB",
+                            "name": "whistleblower.jpg"
+                        },
+                        {
+                            "mode": "-a---",
+                            "lastWriteTime": "07/06/2023 22:15",
+                            "length": "2.5MB",
+                            "name": "proxima_prof.png"
+                        },
+                        {
+                            "mode": "-a---",
+                            "lastWriteTime": "07/06/2023 23:33",
+                            "length": "0.1MB",
+                            "name": "readme.txt"
+                        }
+                    ],
+                    folders: []
+                },
+                {
+                    mode: "rw-r--r--",
+                    lastWriteTime: "2023-01-03 10:13",
+                    length: null,
+                    name : "secrets",
+                    files: [
+                        {
+                            "mode": "rw-r--r--",
+                            "lastWriteTime": "2023-01-06 04:23",
+                            "length": 56123,
+                            "name": "secret_readme.txt"
+                        },
+                        {
+                            "mode": "-a---",
+                            "lastWriteTime": "07/06/2023 21:30",
+                            "length": "564KB",
+                            "name": "topsecret_materials.pdf"
+                        },
+                        {
+                            "mode": "-a---",
+                            "lastWriteTime": "07/06/2023 21:32",
+                            "length": "1.2MB",
+                            "name": "ufo_photo.png"
+                        },
+                        {
+                            "mode": "-a---",
+                            "lastWriteTime": "07/06/2023 21:35",
+                            "length": "876KB",
+                            "name": "secret_photo.jpg"
+                        },
+                        {
+                            "mode": "-a---",
+                            "lastWriteTime": "07/06/2023 21:38",
+                            "length": "2.3MB",
+                            "name": "confidential_report.docx"
+                        },
+                        {
+                            "mode": "-a---",
+                            "lastWriteTime": "07/06/2023 23:33",
+                            "length": "0.1MB",
+                            "name": "readme.txt"
+                        }
+                    ],
+                    folders: []
+                },
+            ]
+        }
+    ]
+};
 
 function appendToOutput(content, isHTML = false) {
     const elem = document.createElement('div');
@@ -19,57 +161,133 @@ function appendToOutput(content, isHTML = false) {
 }
 
 export class LsCommand {
-    constructor() {
+    constructor(fileSystem) {
         this.name = "ls";
+        this.fileSystem = fileSystem;
+    }
+
+    generateListing(currentFolder, depth = 0) {
+        let output = '';
+        let prefix = "🗍"; // 'OPEN FILE FOLDER' (U+1F4C2)
+        output += "\nroot@blackmage:~$ ls\n";
+        // list sub-folders recursively
+        for(const folder of currentFolder.folders) {
+            // Example of Unix-like file attributes
+            const attributes = 'drwxr-xr-x   1 root root';
+
+            // Format date to Unix-like format
+            const date = new Date(folder.lastWriteTime).toLocaleString('en-US', {month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false});
+
+            // Length in this context could mean the total size of the files within the folder
+            const length = folder.files.reduce((total, file) => total + file.size, 0);
+
+            output += `${attributes} ${date} ${length} ${prefix} ${folder.name}/\n`;
+        }
+
+        // list files in folder
+        for(const file of currentFolder.files) {
+            // Example of Unix-like file attributes
+            const attributes = '-rw-r--r--   1 root root';
+
+            // Format date to Unix-like format
+            const date = new Date(file.lastWriteTime).toLocaleString('en-US', {month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false});
+            prefix = "\uD83D\uDDCE";
+            output += `${attributes} ${date} ${file.size} ${prefix} ${file.name}\n`;
+        }
+
+        return output;
     }
     
     execute() {
-        let fileSystemListing = `
-root@blackmage:~$ ls
+        console.log("ls command executed");
+        console.log(fileSystem)
+        console.log("------------");
+        console.log(currentDirectory)
+        console.log("------------");
+        let result = "";
 
-Directory: /root/hidden/
+       
+        console.log("folder is " + currentDirectory)
+        currentDirectory = findFolder(fileSystem, currentDirectory);
+        console.log(currentDirectory);
 
-Mode         LastWriteTime         Length Name
-----         -------------         ------ ----
-d----        07/06/2023      19:02                <span class="directory-name">  pictures</span>
-d----        07/06/2023      20:11                <span class="directory-name">  secret</span>`;
+        // Accessing items inside the "hidden" folder
+        const hiddenFolder = fileSystem.folders.find(folder => folder.name === "hidden");
+        const filesInHiddenFolder = hiddenFolder.files;
+        const foldersInHiddenFolder = hiddenFolder.folders;
+        console.log(hiddenFolder);
+        console.log(filesInHiddenFolder);
+        console.log(foldersInHiddenFolder);
+        
+        // Print the files inside the "hidden" folder
+        console.log("Files in the 'hidden' folder:");
+        filesInHiddenFolder.forEach(file => console.log(file.name));
 
-        if (currentDirectory === 'secret' || currentDirectory === 'secrets') {
-            const secretFilesListing = `
-root@blackmage:~$ ls            
-            
-Directory: /root/hidden/secret/
+        // Print the folders inside the "hidden" folder
+        console.log("Folders in the 'hidden' folder:");
+        foldersInHiddenFolder.forEach(folder => console.log(folder.name));
+        
+        
+        result = this.generateListing(hiddenFolder);
+        
 
-Mode         LastWriteTime             Length    Name
-----         -------------             ------    ----
--a---        07/06/2023      21:30     564KB     topsecret_materials.pdf
--a---        07/06/2023      21:32     1.2MB     ufo_photo.png
--a---        07/06/2023      21:35     876KB     secret_photo.jpg
--a---        07/06/2023      21:38     2.3MB     confidential_report.docx
--a---        07/06/2023      23:33     0.1MB     readme.txt`;
+        output.innerHTML += result;
+    }
+}
 
-            fileSystemListing = secretFilesListing;
+export class PwdCommand {
+    constructor() {
+        this.name = "pwd";
+    }
+
+    execute() {
+        console.log("pwd")
+        console.log(currentDirectory)
+        console.log("pwd")
+        const path = "/root/hidden/" + currentDirectory.name +"/";
+        appendToOutput(path);
+    }
+}
+
+export class CdCommand { //TODO: fix file system
+    constructor() {
+        this.name = "cd";
+    }
+    execute(myArgs)  {
+        console.log('cd');
+        const changeToDirectory = myArgs[1];
+        console.log('arg1 ' + changeToDirectory)
+        console.log(fileSystem);
+
+        // Check if the directory exists
+        //loop through the file system and check if the directory exists
+        let folder = findFolder(fileSystem, changeToDirectory);
+        console.log("---");
+        console.log(folder);
+        console.log("---");
+        currentDirectory = folder;
+        console.log("---current---");
+        console.log(currentDirectory);  //TODO: we have the json 
+        console.log("---current---");
+        
+        const noFound = `
+root@blackmage:~$ cd ${changeToDirectory}
+cd : Cannot find path '/root/hidden/${changeToDirectory}' because it does not exist.
+            `; 
+
+        const directoryChanged = `
+root@blackmage:~$ cd ${currentDirectory.name}
+        `;
+        
+        let returnMessage;
+        if(currentDirectory){
+            returnMessage = directoryChanged
+        } 
+        else {
+            returnMessage = noFound
         }
-        if(currentDirectory === 'pictures') {
 
-            const picturesListing = `
-root@blackmage:~$ ls
-            
-Directory: /root/hidden/pictures/
-
-Mode         LastWriteTime             Length     Name
-----         -------------             ------     ----
--a---        07/06/2023      22:00     1.5MB     alien_world.jpg
--a---        07/06/2023      22:05     1.8MB     david_grush_hidden.png
--a---        07/06/2023      22:10     2.1MB     whistleblower.jpg
--a---        07/06/2023      22:15     2.5MB     proxima_prof.png
--a---        07/06/2023      23:33     0.1MB     readme.txt
-    `;
-
-            fileSystemListing = picturesListing;
-        }
-
-        output.innerHTML += fileSystemListing;
+        output.innerHTML += returnMessage;
     }
 }
 
@@ -94,60 +312,6 @@ export class CatCommand {
       `;
 
         output.innerHTML +=readmeContent;
-    }
-}
-
-let fileSystem = {
-    root: {
-        hidden: {
-            pictures: {},
-            secret: {}
-        }
-    }
-};
-
-function findFolder(obj, folderName) {
-    for(let key in obj) {
-        if(key === folderName) {
-            return obj[key];
-        }
-        if(typeof obj[key] === "object") {
-            let result = findFolder(obj[key], folderName);
-            if(result) {
-                return result;
-            }
-        }
-    }
-}
-
-export class CdCommand {
-    constructor() {
-        this.name = "cd";
-    }   
-    execute(myArgs)  {
-        console.log('cd');
-        const changeToDirectory = myArgs[1];
-        console.log('arg1 ' + changeToDirectory)
-        console.log(fileSystem);
-
-        // Check if the directory exists
-        //loop through the file system and check if the directory exists
-        let folder = findFolder(fileSystem, changeToDirectory);
-        if(folder !== undefined) {
-            console.log('folder exist' + folder);
-            currentDirectory = changeToDirectory;
-            const directoryChanged = `
-root@blackmage:~$ cd ${changeToDirectory}
-            `;
-            output.innerHTML += directoryChanged;
-        } else {
-            const noFound = `
-root@blackmage:~$ cd ${changeToDirectory}
-cd : Cannot find path '/root/hidden/${changeToDirectory}' because it does not exist.
-            `;
-            output.innerHTML += noFound;
-        }
-        
     }
 }
 
@@ -350,15 +514,7 @@ export class HistoryCommand {
     }
 }
 
-export class PwdCommand {
-    constructor() {
-        this.name = "pwd";
-    }
 
-    execute()  {
-        appendToOutput(currentDirectory);
-    }
-}
 
 export class WhoamiCommand {
     constructor() {
