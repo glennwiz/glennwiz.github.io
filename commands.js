@@ -597,6 +597,7 @@ export class HelpCommand {
     execute()  {
         const availableCommands = `
         Available Commands:
+        - matrix: Show the matrix.
         - ls: List files and directories.
         - cd <directory>: Change the current directory.
         - ifconfig: Display network configuration.
@@ -616,7 +617,8 @@ export class HelpCommand {
         - cd: Navigate to the parent directory.
         - date: Display the current date and time.
         - clear: Clear the console output.
-        - help: Show available commands.
+        - help: Show available commands.        
+        - git: Show the git info.
         `;
         output.innerHTML +=availableCommands;
     }
@@ -637,6 +639,19 @@ export class GitCommand {
         });
     }
 }
+
+export class MatrixCommand {
+    constructor() {
+        this.name = "matrix";
+    }   
+        
+    execute() {
+       //i want to redirect to a new page
+         window.location.href = "Matrix.html";
+ 
+    }
+}
+        
 
 export const commands = {
     ls: new LsCommand(),
@@ -660,7 +675,8 @@ export const commands = {
     mv: new MvCommand(),   
     date: new DateCommand(),
     help: new HelpCommand(),
-    git: new GitCommand()
+    git: new GitCommand(),
+    matrix: new MatrixCommand()
 };   
 
    

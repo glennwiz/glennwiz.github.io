@@ -1,0 +1,154 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body{
+            background-color:black;
+            overflow:hidden;
+        }
+        .green-drop, .yellow-drop, .blue-drop, .pink-drop {
+            font-size: 16px;
+            position: absolute;
+            top: 0;
+            animation: drop linear infinite;
+        }
+        .green-drop {
+            color: lime;
+        }
+        .yellow-drop {
+            color: yellow;
+        }
+        .blue-drop {
+            color: blue;
+        }
+        .pink-drop {
+            color: pink;
+        }
+        @keyframes drop {
+            0% {opacity:1;}
+            70% {opacity:0.3;}
+            100% {
+                opacity:0;
+                transform: translateY(100vh);
+            }
+        }
+    </style>
+    <script>
+        var emojis = ['😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '😊', '😇',
+            '🥰', '😍', '🤩', '😘', '😗', '😚', '😙', '😋', '😛', '😜', '🤪', '😝',
+            '🤑', '🤗', '🤭', '🤫', '🤔', '🤐', '🤨', '😐', '😑', '😶', '😏', '😒',
+            '🙄', '😬', '🤥', '😌', '😔', '😪', '🤤', '😴', '😷', '🤒', '🤕', '🤢',
+            '🤮', '🤧', '🥵', '🥶', '🥴', '😵', '🤯', '🤠', '🥳', '😎', '🤓', '🧐',
+            '😕', '😟', '🙁', '😮', '😯', '😲', '😳', '🥺', '😦', '😧', '😨', '😰'];
+
+        var characters = [
+            // Geometric Shapes
+            '▲', '△', '▼', '▽', '◆', '◇', '■', '□', '●', '○', '▪', '▫',
+
+            // Block Elements
+            '█', '▌', '▐',
+
+            // Box Drawing
+            '═', '║', '╒', '╓', '╔', '╕', '╖', '╗', '╘', '╙', '╚', '╛', '╝', '╜', '╞',
+
+            // Miscellaneous Symbols
+            '☀', '☁', '☂', '☃', '☄', '★', '☆', '☎', '☏', '⌛', '⌚', '✂', '✉',
+
+            // Dingbats
+            '✈', '✌', '✔', '✖', '❣', '❤', '➤',
+
+            // Emoticons
+            '☹', '☺', '☻', '✌'
+        ];
+
+
+        function createGreenDrop() {
+            var drop = document.createElement('div');
+            drop.classList.add('green-drop');
+            drop.textContent = String.fromCharCode(0x30A0 + Math.random() * (0x30FF-0x30A0+1));
+            drop.style.left = Math.random() * 100 + 'vw';
+            drop.style.animationDuration = Math.random() * 3 + 's';
+            drop.style.animationDelay = Math.random() * 2 + 's';
+            document.body.appendChild(drop);
+            setTimeout(() => drop.remove(), 5000);
+        }
+
+        function createYellowDrop() {
+            var drop = document.createElement('div');
+            drop.classList.add('yellow-drop');
+            drop.textContent = String.fromCharCode(0x30A0 + Math.random() * (0x30FF-0x30A0+1));
+            drop.style.left = Math.random() * 100 + 'vw';
+            drop.style.animationDuration = Math.random() * 3 + 's';
+            drop.style.animationDelay = Math.random() * 2 + 's';
+            document.body.appendChild(drop);
+            setTimeout(() => drop.remove(), 5000);
+        }
+
+        function createBlueDrop() {
+            var drop = document.createElement('div');
+            drop.classList.add('blue-drop');
+            drop.textContent = Math.floor(Math.random() * 10);
+            drop.style.left = Math.random() * 100 + 'vw';
+            drop.style.animationDuration = Math.random() * 3 + 's';
+            drop.style.animationDelay = Math.random() * 2 + 's';
+            document.body.appendChild(drop);
+            setTimeout(() => drop.remove(), 5000);
+        }
+
+        function createBlueSlowDrop() {
+            var drop = document.createElement('div');
+            drop.classList.add('blue-drop');
+            drop.textContent = Math.floor(Math.random() * 10);
+            drop.style.left = Math.random() * 100 + 'vw';
+            drop.style.animationDuration = Math.random() * 30 + 's';
+            drop.style.animationDelay = Math.random() * 3 + 's';
+            document.body.appendChild(drop);
+            setTimeout(() => drop.remove(), 10000);
+        }
+
+        function createEmojiDrop() {
+            var drop = document.createElement('div');
+            drop.classList.add('pink-drop');
+            drop.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            drop.style.left = Math.random() * 100 + 'vw';
+            drop.style.animationDuration = Math.random() * 20 + 's';
+            drop.style.animationDelay = Math.random() * 5 + 's';
+            document.body.appendChild(drop);
+            setTimeout(() => drop.remove(), 10000);
+        }
+
+        function createSpecialDrop() {
+            var drop = document.createElement('div');
+            drop.classList.add('pink-drop');
+            drop.textContent = characters[Math.floor(Math.random() * characters.length)];
+            drop.style.left = Math.random() * 100 + 'vw';
+            drop.style.animationDuration = Math.random() * 20 + 's';
+            drop.style.animationDelay = Math.random() * 5 + 's';
+            document.body.appendChild(drop);
+            setTimeout(() => drop.remove(), 10000);
+        }
+
+        function execute() {
+            setInterval(createGreenDrop, 50);
+            setInterval(createGreenDrop, 10);
+            setInterval(createGreenDrop, 20);
+            setInterval(createGreenDrop, 30);
+            
+            setInterval(createYellowDrop, 50);
+            setInterval(createYellowDrop, 70);
+            setInterval(createYellowDrop, 800);
+            setInterval(createBlueDrop, 50);
+            setInterval(createBlueDrop, 10);
+            setInterval(createEmojiDrop, 500);
+            setInterval(createSpecialDrop, 500);
+            setInterval(createBlueSlowDrop, 500);
+
+            document.body.addEventListener('click', function() {
+                window.history.back();
+            });
+        }
+    </script>
+</head>
+<body onload="execute()">
+</body>
+</html>
