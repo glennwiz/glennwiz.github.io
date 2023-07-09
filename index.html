@@ -154,5 +154,35 @@
             </code>
         </div>
         <script type="module"  src="terminalScript.js"></script>
+        <div class="terminal">
+            <h2>Delta</h2>
+            <code>
+                Install:
+                  winget install dandavison.delta
+                Config:
+                  git config --global core.pager delta
+            </code>
+        </div>
+        <div class="terminal">
+            <h2>Patch</h2>
+            <code>                
+                cmd:
+                  git add --patch
+                  s -> splitt
+                  y -> stage hunk
+                  n -> not stage hunk
+                  git diff --staged for the y                
+            </code>
+        </div>
+        <div class="terminal">
+            <h2>search commits</h2>
+            <code>                
+                cmd:
+                 git lg -S 'Searchtearm' 
+                 git lg -L:functionName:src/file.cs          
+            </code>
+        </div>
+
+      <script src="terminalScript.js"></script>
     </body>
 </html>
