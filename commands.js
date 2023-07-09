@@ -5,6 +5,7 @@ outputContainer.appendChild(output);
 
 import { isAlienBlockVisible } from './terminalScript.js';
 import { is8bitBlockVisible } from './terminalScript.js';
+import { terminalDivs } from './terminalScript.js';
 
 let currentDirectory = ["hidden"];
 
@@ -620,6 +621,23 @@ export class HelpCommand {
         output.innerHTML +=availableCommands;
     }
 }
+export class GitCommand {
+    constructor() {
+        this.name = "git";
+    }
+
+    execute() {
+        // Show or hide terminal divs 
+        Array.from(terminalDivs).forEach(div => {
+            if (div.style.display === "none") {
+                div.style.display = "block";
+            } else {
+                div.style.display = "none";
+            }
+        });
+    }
+}
+
 export const commands = {
     ls: new LsCommand(),
     cat: new CatCommand(),
@@ -641,7 +659,8 @@ export const commands = {
     echo: new EchoCommand(),   
     mv: new MvCommand(),   
     date: new DateCommand(),
-    help: new HelpCommand()
+    help: new HelpCommand(),
+    git: new GitCommand()
 };   
 
    

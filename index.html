@@ -130,43 +130,46 @@
             <h2>Practical uses of git reset --soft?</h2>
             <code>
                 <span class="command"># Move the HEAD, and just the HEAD, one commit back!</span>
-                <span class="command">git reset --soft HEAD^</span>
+                git reset --soft HEAD^
 
                 <span class="command"># Move the HEAD, and just the HEAD, two commits back!</span>
-                <span class="command">git reset --soft HEAD^^</span>
+                git reset --soft HEAD^^
             </code>
         </div>
         <div class="terminal">
             <h2>Origin</h2>
             <code>
                 <span class="command"># Get list of locations</span>
-                <span class="command">git remote -v</span>
+                git remote -v
 
                 <span class="command"># Change the Origin</span>
-                <span class="command">git remote set-url origin https://git-repo/new-repository.git</span>
+                git remote set-url origin https://git-repo/new-repository.git
             </code>
         </div>
         <div class="terminal">
             <h2>Origin</h2>
             <code>
                 <span class="command"># history path for powershell</span>
-                <span class="command">(Get-PSReadlineOption).HistorySavePath</span>
+                (Get-PSReadlineOption).HistorySavePath
+                
+                <span class="command"># Open it in code</span>
+                code (Get-PSReadlineOption).HistorySavePath
             </code>
         </div>
         <script type="module"  src="terminalScript.js"></script>
         <div class="terminal">
             <h2>Delta</h2>
             <code>
-                Install:
+                <span class="command">Install:</span>
                   winget install dandavison.delta
-                Config:
+                <span class="command">Config:</span>
                   git config --global core.pager delta
             </code>
         </div>
         <div class="terminal">
             <h2>Patch</h2>
             <code>                
-                cmd:
+                <span class="command">cmd:</span>
                   git add --patch
                   s -> splitt
                   y -> stage hunk
@@ -177,7 +180,7 @@
         <div class="terminal">
             <h2>search commits</h2>
             <code>                
-                cmd:
+                <span class="command">cmd:</span>
                  git lg -S 'Searchtearm' 
                  git lg -L:functionName:src/file.cs          
             </code>

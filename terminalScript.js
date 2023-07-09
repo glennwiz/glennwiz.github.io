@@ -3,8 +3,8 @@
 const commandInput = document.getElementById('command-input');
 const outputContainer = document.getElementById('output-container');
 const commandContainer = document.getElementById('command-container');
-const terminalDivs = document.getElementsByClassName('terminal');
 
+export const terminalDivs = document.getElementsByClassName('terminal');
 export let isAlienBlockVisible = false;
 export let is8bitBlockVisible = false;
 
