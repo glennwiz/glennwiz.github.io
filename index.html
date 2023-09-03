@@ -193,6 +193,28 @@
                  git lg -L:functionName:src/file.cs          
             </code>
         </div>
+        <div class="terminal">
+            <h2>Cleanup branches git</h2>
+            <code>                
+                <span class="command">cmd:</span>
+                <span class="command">git fetch -p origin</span>
+
+                From https://github.com/glennwiz/StoryTeller
+                - [deleted]         (none)     -> origin/feature/Broken
+                - [deleted]         (none)     -> origin/feature/DiscordBot
+                - [deleted]         (none)     -> origin/feature/MakeASelectionForChatBotOrStoryteller
+                - [deleted]         (none)     -> origin/masterBackup
+                * [new branch]      develop    -> origin/develop
+
+                <span class="command">git branch --merged | where { $_ -notlike '*main*' -and $_ -notlike '*master*' } | ForEach-Object { git branch -d $_.Trim() }</span>
+
+                Deleted branch feature/DiscordBot (was 710545f).
+                Deleted branch feature/LoopbackBot (was f41bf42).
+                Deleted branch feature/MoveTheInferenceToStaticOrEventHandling (was 034de96).
+                Deleted branch feature/SystemDesignFix (was 90ef8ed).
+                Deleted branch feature/memory (was bfd7e08).
+            </code>
+        </div>
 
       <script src="terminalScript.js"></script>
     </body>
