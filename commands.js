@@ -344,27 +344,33 @@ export class RepoCommand {
                 // Sort repos by updated_at in descending order
                 repos.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
             
-                console.log(repos); // This will now print the sorted repositories
-                repos.forEach(repo => {
-                    console.log(repo.name); // Print each repo name
-                });
+                let table = document.createElement('table');
+                let headerRow = table.insertRow();
+                
+                // Create headers for the two columns
+                let headerName = headerRow.insertCell();
+                headerName.textContent = 'Repository Name';
+                let headerUpdated = headerRow.insertCell();
+                headerUpdated.textContent = 'Last Updated';
             
-                let ul = document.createElement('ul');
-            
                 repos.forEach(repo => {
-                    let li = document.createElement('li');
+                    let row = table.insertRow();
+                    
+                    let cellName = row.insertCell();
                     let anchor = document.createElement('a');
                     anchor.href = repo.html_url;
                     anchor.target = "_blank";
                     anchor.rel = "noopener noreferrer";
-                    anchor.textContent = repo.name + " " + repo.updated_at;
-                    li.appendChild(anchor);
-                    ul.appendChild(li);
+                    anchor.textContent = repo.name;
+                    cellName.appendChild(anchor);
+            
+                    let cellUpdated = row.insertCell();
+                    cellUpdated.textContent = new Date(repo.updated_at).toLocaleString(); // Pretty print the date
                 });
             
-                // Append the ul element to your document or a specific element. Here we are appending to document body
-                document.body.appendChild(ul);
-            });
+                // Append the table element to your document or a specific element. Here we are appending to document body
+                document.body.appendChild(table);
+            });            
     }
 }
 
