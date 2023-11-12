@@ -337,36 +337,31 @@ export class RepoCommand {
         this.name = "repo";
     }
 
-    async execute() {
-        const reposResponse = await fetch('https://api.github.com/users/glennwiz/repos');
-        const repos = await reposResponse.json();
+    execute() {
+        fetch('https://api.github.com/users/glennwiz/repos') // Fetch repositories from GitHub API
+            .then(response => response.json()) // Parse the JSON from the API
+            .then(repos => {
+                console.log(repos); // Print the repositories to the console
+                repos.forEach(repo => {
+                    console.log(repo.name); // Print each repo name
+                });
 
-        // Fetch last commit date for each repository and add it to the repo object
-        const reposWithLastCommit = await Promise.all(repos.map(async (repo) => {
-            const commitsResponse = await fetch(`https://api.github.com/repos/glennwiz/${repo.name}/commits?per_page=1`);
-            const commits = await commitsResponse.json();
-            repo.lastCommitDate = new Date(commits[0].commit.committer.date);
-            return repo;
-        }));
+                let ul = document.createElement('ul');
 
-        // Sort repositories by last commit date
-        reposWithLastCommit.sort((a, b) => b.lastCommitDate - a.lastCommitDate);
+                repos.forEach(repo => {
+                    let li = document.createElement('li');
+                    let anchor = document.createElement('a');
+                    anchor.href = repo.html_url;
+                    anchor.target = "_blank";
+                    anchor.rel = "noopener noreferrer";
+                    anchor.textContent = repo.name + " " + repo.updated_at;
+                    li.appendChild(anchor);
+                    ul.appendChild(li);
+                });
 
-        // Create and append the list elements as before, now with sorted repos
-        let ul = document.createElement('ul');
-
-        reposWithLastCommit.forEach(repo => {
-            let li = document.createElement('li');
-            let anchor = document.createElement('a');
-            anchor.href = repo.html_url;
-            anchor.target = "_blank";
-            anchor.rel = "noopener noreferrer";
-            anchor.textContent = `${repo.name} - Last Commit: ${repo.lastCommitDate.toDateString()}`;
-            li.appendChild(anchor);
-            ul.appendChild(li);
-        });
-
-        document.body.appendChild(ul);
+// Append the ul element to your document or a specific element. Here we are appending to document body
+                document.body.appendChild(ul);
+            });
     }
 }
 
