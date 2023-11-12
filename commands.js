@@ -341,13 +341,16 @@ export class RepoCommand {
         fetch('https://api.github.com/users/glennwiz/repos') // Fetch repositories from GitHub API
             .then(response => response.json()) // Parse the JSON from the API
             .then(repos => {
-                console.log(repos); // Print the repositories to the console
+                // Sort repos by updated_at in descending order
+                repos.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+            
+                console.log(repos); // This will now print the sorted repositories
                 repos.forEach(repo => {
                     console.log(repo.name); // Print each repo name
                 });
-
+            
                 let ul = document.createElement('ul');
-
+            
                 repos.forEach(repo => {
                     let li = document.createElement('li');
                     let anchor = document.createElement('a');
@@ -358,8 +361,8 @@ export class RepoCommand {
                     li.appendChild(anchor);
                     ul.appendChild(li);
                 });
-
-// Append the ul element to your document or a specific element. Here we are appending to document body
+            
+                // Append the ul element to your document or a specific element. Here we are appending to document body
                 document.body.appendChild(ul);
             });
     }
