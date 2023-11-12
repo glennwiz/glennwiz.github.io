@@ -337,33 +337,39 @@ export class RepoCommand {
         this.name = "repo";
     }
 
-    execute() {
-        fetch('https://api.github.com/users/glennwiz/repos') // Fetch repositories from GitHub API
-            .then(response => response.json()) // Parse the JSON from the API
-            .then(repos => {
-                console.log(repos); // Print the repositories to the console
-                repos.forEach(repo => {
-                    console.log(repo.name); // Print each repo name
-                });
+    async execute() {
+        const reposResponse = await fetch('https://api.github.com/users/glennwiz/repos');
+        const repos = await reposResponse.json();
 
-                let ul = document.createElement('ul');
+        // Fetch last commit date for each repository and add it to the repo object
+        const reposWithLastCommit = await Promise.all(repos.map(async (repo) => {
+            const commitsResponse = await fetch(`https://api.github.com/repos/glennwiz/${repo.name}/commits?per_page=1`);
+            const commits = await commitsResponse.json();
+            repo.lastCommitDate = new Date(commits[0].commit.committer.date);
+            return repo;
+        }));
 
-                repos.forEach(repo => {
-                    let li = document.createElement('li');
-                    let anchor = document.createElement('a');
-                    anchor.href = repo.html_url;
-                    anchor.target = "_blank";
-                    anchor.rel = "noopener noreferrer";
-                    anchor.textContent = repo.name;
-                    li.appendChild(anchor);
-                    ul.appendChild(li);
-                });
+        // Sort repositories by last commit date
+        reposWithLastCommit.sort((a, b) => b.lastCommitDate - a.lastCommitDate);
 
-// Append the ul element to your document or a specific element. Here we are appending to document body
-                document.body.appendChild(ul);
-            });
+        // Create and append the list elements as before, now with sorted repos
+        let ul = document.createElement('ul');
+
+        reposWithLastCommit.forEach(repo => {
+            let li = document.createElement('li');
+            let anchor = document.createElement('a');
+            anchor.href = repo.html_url;
+            anchor.target = "_blank";
+            anchor.rel = "noopener noreferrer";
+            anchor.textContent = `${repo.name} - Last Commit: ${repo.lastCommitDate.toDateString()}`;
+            li.appendChild(anchor);
+            ul.appendChild(li);
+        });
+
+        document.body.appendChild(ul);
     }
 }
+
 
 export class ClearCommand {
     constructor() {
