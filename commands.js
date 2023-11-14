@@ -706,5 +706,3 @@ export const commands = {
     matrix: new MatrixCommand(),
     code: new CodeCommand()
 };   
-
-   
