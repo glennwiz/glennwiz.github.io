@@ -105,22 +105,22 @@
         <br>
 
         <div class="codeblock">
-            <h2>Action map</h2>
-            <code>
-                var actions = new Dictionary<string, Action>{
-                    ["action1"] = () => action1(),
-                    ["action2"] = () => Console.WriteLine("action2"),
-                    ["action3"] = () => Console.WriteLine("action3")
-                };
-                
-                actions["action1"]();
-                
-                 public void action1()
-                 {
-                     Console.WriteLine("actiosdsddn1");
-                 }
-            </code> 
-        </div>
+    <h2>Action map</h2>
+    <pre><code>
+    var actions = new Dictionary&lt;string, Action&gt;{
+        ["action1"] = () => action1(),
+        ["action2"] = () => Console.WriteLine("action2"),
+        ["action3"] = () => Console.WriteLine("action3")
+    };
+
+    actions["action1"]();
+
+    public void action1()
+    {
+        Console.WriteLine("action1");
+    }
+    </code></pre>
+</div>
 
         <div class="terminal">
             <h2>Vim remeber</h2>
