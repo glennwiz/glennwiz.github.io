@@ -650,7 +650,7 @@ export class GitCommand {
     }
 }
 
-export class GitCommand {
+export class CodeCommand {
     constructor() {
         this.name = "code";
     }
@@ -703,7 +703,8 @@ export const commands = {
     date: new DateCommand(),
     help: new HelpCommand(),
     git: new GitCommand(),
-    matrix: new MatrixCommand()
+    matrix: new MatrixCommand(),
+    code: new CodeCommand()
 };   
 
    
