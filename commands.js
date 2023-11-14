@@ -3,7 +3,7 @@ output.className = 'command-output';
 const outputContainer = document.getElementById('output-container');
 outputContainer.appendChild(output);
 
-import { isAlienBlockVisible } from './terminalScript.js';
+import { codeDivs, isAlienBlockVisible } from './terminalScript.js';
 import { is8bitBlockVisible } from './terminalScript.js';
 import { terminalDivs } from './terminalScript.js';
 
@@ -641,6 +641,23 @@ export class GitCommand {
     execute() {
         // Show or hide terminal divs 
         Array.from(terminalDivs).forEach(div => {
+            if (div.style.display === "none") {
+                div.style.display = "block";
+            } else {
+                div.style.display = "none";
+            }
+        });
+    }
+}
+
+export class GitCommand {
+    constructor() {
+        this.name = "code";
+    }
+
+    execute() {
+        // Show or hide terminal divs 
+        Array.from(codeDivs).forEach(div => {
             if (div.style.display === "none") {
                 div.style.display = "block";
             } else {
