@@ -104,13 +104,31 @@
         </div>
         <br>
 
+        <div class="codeblock">
+            <h2>Action map</h2>
+            <code>
+                var actions = new Dictionary<string, Action>{
+                    ["action1"] = () => action1(),
+                    ["action2"] = () => Console.WriteLine("action2"),
+                    ["action3"] = () => Console.WriteLine("action3")
+                };
+                
+                actions["action1"]();
+                
+                 public void action1()
+                 {
+                     Console.WriteLine("actiosdsddn1");
+                 }
+            </code> 
+        </div>
+
         <div class="terminal">
             <h2>Vim remeber</h2>
             <code>
-		<span class="command">commands: set relativenumber,  set number</span> 
+		        <span class="command">commands: set relativenumber,  set number</span> 
                 <span class="command">shift vjjjy - yank in to buffer</span>
                 <span class="command">h rtp - Config paths - runtimepaths </span>
-		<span class="command">------------------------------</span>
+		        <span class="command">------------------------------</span>
                 <span class="command">then d elete everything un t il the next space: dtspace.</span>
                 <span class="command">dtspace or dt" osv.</span>
                 <span class="command">move line up or down</span>
@@ -126,9 +144,9 @@
                 <span class="command">, and ; -> repeat f and t</span>
                 <span class="command">o and O -> New Line Cap O == before</span>
                 <span class="command">Sex and Vex -> splitscreen</span>
-		<span class="commnad">ctlr-w-w -> move between spilts</span>
-		<span class="command">Ex Explore - netrv fileexplorer</span>
-		<span class="command">= , =ap - Auto indent<span>
+                <span class="command">ctlr-w-w -> move between spilts</span>
+                <span class="command">Ex Explore - netrv fileexplorer</span>
+                <span class="command">= , =ap - Auto indent<span>
             </code>
         </div>
 

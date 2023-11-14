@@ -5,11 +5,16 @@ const outputContainer = document.getElementById('output-container');
 const commandContainer = document.getElementById('command-container');
 
 export const terminalDivs = document.getElementsByClassName('terminal');
+export const codeDivs = document.getElementsByClassName("codeblock");
 export let isAlienBlockVisible = false;
 export let is8bitBlockVisible = false;
 
 // Hide terminal divs initially
 Array.from(terminalDivs).forEach(div => {
+    div.style.display = 'none';
+});
+
+Array.from(codeDivs).forEach(div => {
     div.style.display = 'none';
 });
 
