@@ -161,18 +161,17 @@
             <code>
                 <span class="command">git fetch origin</span>
                 <span class="command">git reset --hard origin/master</span>
-            <pre></code>
+            </code>
             <h2>Reset changes local gitrepo</h2> 
+            <pre><code>
             git reset - unstage all files
             git checkout . revert all changes
             git checkout [some_dir|file.txt] revert only that file
             
             -- safe way --
             git stash  --  verify you are in the state you want
-            git stash drop -- if ok just drop the stash
-            <code></pre>
-                
-            </code>
+            git stash drop -- if ok just drop the stash  
+            </code></pre>
         </div>
         <div class="terminal">
             <h2>What is the meaning of ^M in 'git diff'?</h2>
