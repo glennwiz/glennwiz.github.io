@@ -106,6 +106,7 @@
 
         <div class="codeblock">
             <h2>DI in cosole app</h2>
+            <pre><code class="language-csharp"></code>
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -113,7 +114,7 @@ IHost _host = Host.CreateDefaultBuilder(args).ConfigureServices(s => {
     s.AddSingleton<Application>();
  }).Build();
 
- var app = _host.Services.GetRequiredService<Application>();
+var app = _host.Services.GetRequiredService<Application>();
 app.Run();
 
 internal class Application
@@ -132,7 +133,7 @@ internal class Application
         System.Console.WriteLine("Application is running");
     }
 }
-            <pre><code class="language-csharp">
+            
 
             </code></pre>
         </div>
