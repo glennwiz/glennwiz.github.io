@@ -105,6 +105,39 @@
         <br>
 
         <div class="codeblock">
+            <h2>DI in cosole app</h2>
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+IHost _host = Host.CreateDefaultBuilder(args).ConfigureServices(s => {
+    s.AddSingleton<Application>();
+ }).Build();
+
+ var app = _host.Services.GetRequiredService<Application>();
+app.Run();
+
+internal class Application
+{
+    private readonly ILogger<Application> _logger;
+
+    public Application(ILogger<Application> logger)
+    {
+        logger.LogInformation("Application is starting");
+        _logger = logger;
+    }
+
+    public void Run()
+    {
+        _logger.LogInformation("Logging application is running");
+        System.Console.WriteLine("Application is running");
+    }
+}
+            <pre><code class="language-csharp">
+
+            </code></pre>
+        </div>
+
+        <div class="codeblock">
             <h2>Action map</h2>
             <pre><code class="language-csharp">
     var actions = new Dictionary&lt;string, Action&gt;{
