@@ -35,11 +35,11 @@ h1 {
 .terminal code {
   display: block;
   white-space: pre-wrap;
-  color: #00BFFF;
+  color: #00cc6d;
 }
 
 .terminal code span.command {
-  color: #4CD964;
+  color: rgb(35, 147, 238);
 }
 
 .terminal pre {
@@ -60,7 +60,7 @@ h1 {
 }
 
 .prompt {
-  color: #ff0;
+  color: rgb(255, 255, 0);
   display: inline-block;
   float: left;
   clear: both;
