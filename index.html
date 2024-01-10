@@ -350,8 +350,7 @@
 	 <div class="terminal">
             <h2>msbuild in to Path</h2>
             <code>                
-                <span class="command">[System.Environment]::SetEnvironmentVariable("Path", [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::Machine) + ";C:\Program Files\Microsoft Visual Studio\2022\Professional\MSBuild\Current\Bin", [System.EnvironmentVariableTarget]::Machine)
-</span>
+                <span class="command">[System.Environment]::SetEnvironmentVariable("Path", [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::Machine) + ";C:\Program Files\Microsoft Visual Studio\2022\Professional\Common7\IDE\Extensions\TestPlatform;C:\Program Files\Microsoft Visual Studio\2022\Professional\MSBuild\Current\Bin", [System.EnvironmentVariableTarget]::Machine)</span>
                 <span class="command">$env:PATH -split ';'</span>                
             </code>
         </div>  
