@@ -104,57 +104,7 @@
         </div>
         <br>
 
-        <div class="codeblock">
-            <h2>DI in console app</h2>
-            <pre><code class="language-csharp">
-    using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Hosting;
-
-    IHost _host = Host.CreateDefaultBuilder(args).ConfigureServices(s => {
-        s.AddSingleton<Application>();
-    }).Build();
-
-    var app = _host.Services.GetRequiredService<Application>();
-    app.Run();
-
-    internal class Application
-    {
-        private readonly ILogger<Application> _logger;
-
-        public Application(ILogger<Application> logger)
-        {
-            logger.LogInformation("Application is starting");
-            _logger = logger;
-        }
-
-        public void Run()
-        {
-            _logger.LogInformation("Logging application is running");
-            System.Console.WriteLine("Application is running");
-        }
-    }
-                
-
-            </code></pre>
-        </div>
-
-        <div class="codeblock">
-            <h2>Action map</h2>
-            <pre><code class="language-csharp">
-    var actions = new Dictionary&lt;string, Action&gt;{
-        ["action1"] = () => action1(),
-        ["action2"] = () => Console.WriteLine("action2"),
-        ["action3"] = () => Console.WriteLine("action3")
-    };
-
-    actions["action1"]();
-
-    public void action1()
-    {
-        Console.WriteLine("action1");
-    }
-            </code></pre>
-        </div>
+ 
 
         <div class="terminal">
            
@@ -335,9 +285,9 @@
 		<code>
 			<span class="command"> 
 				</span>
-			Build.ArtifactStagingDirectory - The local path on the agent where any artifacts are copied to before being pushed to their destination. For example: c:\agent_work\1\a
-			Build.BinariesDirectory - The local path on the agent you can use as an output folder for compiled binaries. For example: c:\agent_work\1\b.
-			Build.Repository.LocalPath - The local path on the agent where your source code files are downloaded. For example: c:\agent_work\1\s. This variable is synonymous with Build.SourcesDirectory.				
+Build.ArtifactStagingDirectory - The local path on the agent where any artifacts are copied to before being pushed to their destination. For example: c:\agent_work\1\a
+Build.BinariesDirectory - The local path on the agent you can use as an output folder for compiled binaries. For example: c:\agent_work\1\b.
+Build.Repository.LocalPath - The local path on the agent where your source code files are downloaded. For example: c:\agent_work\1\s. This variable is synonymous with Build.SourcesDirectory.				
 			
 		</code>
 	</div>
@@ -495,8 +445,62 @@
 	<div class="terminal">      
         
 	</div>
+
+    <div class="codeblock">
+        <h2>DI in console app</h2>
+        <pre><code class="language-csharp">
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+IHost _host = Host.CreateDefaultBuilder(args).ConfigureServices(s => {
+    s.AddSingleton<Application>();
+}).Build();
+
+var app = _host.Services.GetRequiredService<Application>();
+app.Run();
+
+internal class Application
+{
+    private readonly ILogger<Application> _logger;
+
+    public Application(ILogger<Application> logger)
+    {
+        logger.LogInformation("Application is starting");
+        _logger = logger;
+    }
+
+    public void Run()
+    {
+        _logger.LogInformation("Logging application is running");
+        System.Console.WriteLine("Application is running");
+    }
+}
+            
+
+        </code></pre>
+    </div>
+
+    <div class="codeblock">
+        <h2>Action map</h2>
+        <pre><code class="language-csharp">
+var actions = new Dictionary&lt;string, Action&gt;{
+    ["action1"] = () => action1(),
+    ["action2"] = () => Console.WriteLine("action2"),
+    ["action3"] = () => Console.WriteLine("action3")
+};
+
+actions["action1"]();
+
+public void action1()
+{
+    Console.WriteLine("action1");
+}
+        </code></pre>
+    </div>
+
     <div class="codeblock">
         <h2>Vim remeber</h2>
+        <pre>
         <code>
             <span class="command">commands: set relativenumber,  set number</span> 
             <span class="command">shift vjjjy - yank in to buffer</span>
@@ -524,7 +528,7 @@
         v i W  -> allToNextWhiteSpace
         v i P  -> paragraph
         v i {  -> []{}"' all between 			
-        </code>
+        </code></pre>
 
         <img src="2010_blast_from_the_past.gif" alt="">
         <code>
