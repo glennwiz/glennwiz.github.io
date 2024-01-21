@@ -609,6 +609,8 @@ export class HelpCommand {
         Available Commands:
         - help: Show available commands.         
         - git: Show the git info.
+        - code: Show snippets
+        - vim: Show vim commands
         - ls: List files and directories.
         - cd <directory>: Change the current directory.
         - ifconfig: Display network configuration.
