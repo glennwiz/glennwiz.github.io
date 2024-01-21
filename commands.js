@@ -607,7 +607,8 @@ export class HelpCommand {
     execute()  {
         const availableCommands = `
         Available Commands:
-        - matrix: Show the matrix.
+        - help: Show available commands.         
+        - git: Show the git info.
         - ls: List files and directories.
         - cd <directory>: Change the current directory.
         - ifconfig: Display network configuration.
@@ -626,9 +627,8 @@ export class HelpCommand {
         - echo <message>: Print a message to the console.
         - cd: Navigate to the parent directory.
         - date: Display the current date and time.
-        - clear: Clear the console output.
-        - help: Show available commands.        
-        - git: Show the git info.
+        - clear: Clear the console output.   
+        - matrix: Show the matrix. 
         `;
         output.innerHTML +=availableCommands;
     }
