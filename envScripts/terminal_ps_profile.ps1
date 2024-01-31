@@ -3,14 +3,14 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
 Write-Host "Running statup script! at $profile"
 Write-Host "Alias: tig, less, mc, touch, grep, vim, rider, vs = visualStudio, csr = repel in console"
- 
+
 function ChangeTC{set-location c:}
 function ChangeToDev {
     $currentPath = Get-Location
-   
+
     if ($currentPath.Path -like "C:\dev*") {
          Write-Host "You are in a subdirectory of C:\dev"
-    } else { 
+    } else {
         Set-Location "C:\dev"
     }
 }
@@ -28,7 +28,7 @@ function CountG {
     $folderPath = Get-Location
 
     $files = Get-ChildItem -Path $folderPath -Include *.cs, *.md, *.json -Recurse
-    
+
     $totalLineCount = 0
 
     # Process each file
@@ -56,11 +56,11 @@ function CountG {
             $fileInfo2 = "Contents of $($file.FullName):"
             $outputArray += $fileInfo2
             Write-Host $fileInfo2 -ForegroundColor Yellow
-            $content | ForEach-Object { 
-              Write-Host $_ 
+            $content | ForEach-Object {
+              Write-Host $_
               $outputArray += $_
               }
-        } 
+        }
     }
 
     # Print out the total line count
@@ -76,10 +76,10 @@ function CountG {
 set-alias cdc ChangeToC
 set-alias cdd ChangeToDev
 set-alias count CountG
-set-alias rider 'C:\ProgramData\Microsoft\Windows\Start Menu\Programs\JetBrains\JetBrains Rider 2022.3.3.lnk'
+set-alias rider 'C:\Program Files\JetBrains\JetBrains Rider 2022.3.3\bin\rider64.exe'
 set-alias vs 'C:\Program Files\Microsoft Visual Studio\2022\Professional\Common7\IDE\devenv.exe'
-set-alias vim 'C:\Users\Glennwiz\scoop\shims\nvim.exe'
-set-alias ll ls 
+set-alias vim nvim
+set-alias ll ls
 set-alias grep 'c:\Program files\git\usr\bin\grep.exe'
 set-alias tig 'c:\Program files\git\usr\bin\tig.exe'
 set-alias less 'c:\Program files\git\usr\bin\less.exe'
