@@ -636,9 +636,9 @@ export class HelpCommand {
     }
 }
 
-export class tlfnr{
+export class tlfCommand{
     constructor() {
-        this.name = "47313638"
+        this.name = "_47313638"
     }
 
     execute() {
@@ -717,5 +717,6 @@ export const commands = {
     help: new HelpCommand(),
     git: new GitCommand(),
     matrix: new MatrixCommand(),
-    code: new CodeCommand()
+    code: new CodeCommand(),
+    _47313638: new tlfCommand()
 };   
