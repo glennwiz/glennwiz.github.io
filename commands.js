@@ -635,6 +635,17 @@ export class HelpCommand {
         output.innerHTML +=availableCommands;
     }
 }
+
+export class tlfnr{
+    constructor() {
+        this.name = "47313638"
+    }
+
+    execute() {
+        window.location.href = "image.png";
+    }
+}
+
 export class GitCommand {
     constructor() {
         this.name = "git";
