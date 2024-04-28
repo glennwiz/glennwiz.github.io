@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Page Title</title>
+    <style>
+        body {
+            background-color: black;
+            color: white; /* Ensures text is visible against the black background */
+        }
+    </style>
+    <!-- Include HTMX -->
+    <script src="https://unpkg.com/htmx.org"></script>
+</head>
+<body>
+
+    <div id="content-area">
+        <h1>This is a Heading</h1>
+        <p>This is a paragraph.</p>
+    </div>
+
+    <label>
+        <input id="tbx1" name="key" type="text" value="">
+    </label>
+    
+    <button hx-get="https://lw4mxk5s-7077.euw.devtunnels.ms/image-with-qr" hx-target="#content-area" hx-swap="innerHTML" hx-include="#tbx1">
+        Get QR
+    </button>
+
+</body>
+</html>
+
