@@ -108,6 +108,18 @@
            
         </div>
 
+	<div class="terminal">
+    <h2>fatal: bad object refs/remotes/origin/HEAD</h2>
+    <code>
+        <span class="command">git remote set-head origin -d</span>
+        error: cannot lock ref 'refs/remotes/origin/HEAD': unable to resolve reference 'refs/remotes/origin/HEAD': reference broken
+        error: Could not delete refs/remotes/origin/HEAD
+        <span class="command">rm .git/refs/remotes/origin/HEAD</span>
+        <span class="command">git remote set-head origin -a</span>
+        origin/HEAD set to master
+    </code>
+</div>
+
         <div class="terminal">
             <h2>List Full Commit Messages for a Specific Git Branch</h2>
             <code>
