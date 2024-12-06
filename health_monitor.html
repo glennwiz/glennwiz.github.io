@@ -46,6 +46,27 @@
         .last-updated {
             color: var(--gray);
             font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .refresh-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .refresh-spinner.active {
+            opacity: 1;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .grid {
@@ -146,7 +167,10 @@
                 <i data-lucide="activity"></i>
                 Health Check Dashboard
             </h1>
-            <div class="last-updated">Last updated: <span id="lastUpdated">Never</span></div>
+            <div class="last-updated">
+                Last updated: <span id="lastUpdated">Never</span>
+                <i data-lucide="refresh-cw" class="refresh-spinner" id="refreshSpinner"></i>
+            </div>
         </div>
 
         <div id="errorMessage" class="error-message">
@@ -174,7 +198,8 @@
         const CONFIG = {
             // Replace this with your Gist URL
             gistUrl: 'https://glennwiz.github.io/health_targets.json',
-            refreshInterval: 30000 // 30 seconds
+            refreshInterval: 10000, // 10 seconds
+            showRefreshAnimation: true // Enable refresh animation
         };
 
         // Helper functions
@@ -246,11 +271,19 @@
         }
 
         async function fetchTargets() {
+            const spinner = document.getElementById('refreshSpinner');
+            spinner.classList.add('active');
             try {
                 document.getElementById('loader').style.display = 'block';
                 document.getElementById('errorMessage').style.display = 'none';
 
-                const response = await fetch(CONFIG.gistUrl);
+                const response = await fetch(CONFIG.gistUrl + '?_=' + Date.now(), {
+                    cache: 'no-store',
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache'
+                    }
+                });
                 if (!response.ok) throw new Error('Failed to fetch targets');
                 
                 const text = await response.text();
@@ -271,6 +304,9 @@
                 document.getElementById('errorMessage').style.display = 'block';
             } finally {
                 document.getElementById('loader').style.display = 'none';
+                setTimeout(() => {
+                    spinner.classList.remove('active');
+                }, 500);
             }
         }
 
