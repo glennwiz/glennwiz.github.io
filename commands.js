@@ -506,7 +506,6 @@ export class HistoryCommand {
     }
 
     execute()  {
-        const linkId = `ssh-link-${Date.now()}`;
         const commandHistory = `
         
 
@@ -520,24 +519,10 @@ export class HistoryCommand {
   8  mv file.txt newdir/
   9  mkdir newdir
  10  rm myfile.txt
- 11  <span class="command" id="${linkId}" style="cursor:pointer;text-decoration:underline">ssh root@185.53.177.52 -p 22 -i id_rsa -o StrictHostKeyChecking=no -password '3treaE$1£'</span>
+ 11  ssh root@185.53.177.52 -p 22 -i id_rsa -o StrictHostKeyChecking=no -password '3treaE$1£'
         `;
 
         output.innerHTML += commandHistory;
-        const sshLink = document.getElementById(linkId);
-        if (sshLink) {
-            sshLink.addEventListener('click', () => {
-                // Simulate executing the ssh command
-                commands.ssh.execute([
-                    'ssh',
-                    'root@185.53.177.52',
-                    '-p', '22',
-                    '-i', 'id_rsa',
-                    '-o', 'StrictHostKeyChecking=no',
-                    '-password', "3treaE$1£"
-                ]);
-            });
-        }
     }
 }
 
@@ -843,5 +828,6 @@ export const commands = {
     code: new CodeCommand(),
     _47313638: new tlfCommand(),
     open: new OpenCommand(),
-    ssh: new SshCommand()
+    ssh: new SshCommand(),
+    "ssh root@185.53.177.52 -p 22 -i id_rsa -o StrictHostKeyChecking=no -password '3treaE$1£'": new SshCommand()
 };   

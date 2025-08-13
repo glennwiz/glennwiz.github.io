@@ -24,13 +24,21 @@ Array.from(codeDivs).forEach(div => {
 commandInput.addEventListener('keydown', function(event) {
     if (event.key === 'Enter') {
         event.preventDefault();
-        const args = event.target.value.split(' ');
+        const raw = event.target.value.trim();
+        const args = raw.split(' ');
         const command = args[0];
         commandInput.value = '';
         console.log(`Command: ${command}`);
         console.log(`Args: ${args}`)
         console.log(commands)
-        if(command in commands) {
+        // Exact-match full-line commands first (e.g., the special ssh line)
+        if (raw in commands) {
+            console.log('Exact command match');
+            commands[raw].execute(args);
+            commandInput.focus()
+            commandContainer.scrollIntoView(false);
+        }
+        else if(command in commands) {
             console.log('Command found');
             commands[command].execute(args);
             commandInput.focus()
