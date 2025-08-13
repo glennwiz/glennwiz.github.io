@@ -506,23 +506,38 @@ export class HistoryCommand {
     }
 
     execute()  {
+        const linkId = `ssh-link-${Date.now()}`;
         const commandHistory = `
         
 
- 1  ls
- 2  cd secrets
- 3  ifconfig
- 4  lsblk
- 5  top
- 6  cat myfile.txt
- 7  cp file1.txt file2.txt
- 8  mv file.txt newdir/
- 9  mkdir newdir
-10  rm myfile.txt
-11  ssh root@185.53.177.52 -p 22 -i id_rsa -o StrictHostKeyChecking=no -password '3treaE$1£'
+  1  ls
+  2  cd secrets
+  3  ifconfig
+  4  lsblk
+  5  top
+  6  cat myfile.txt
+  7  cp file1.txt file2.txt
+  8  mv file.txt newdir/
+  9  mkdir newdir
+ 10  rm myfile.txt
+ 11  <span class="command" id="${linkId}" style="cursor:pointer;text-decoration:underline">ssh root@185.53.177.52 -p 22 -i id_rsa -o StrictHostKeyChecking=no -password '3treaE$1£'</span>
         `;
 
         output.innerHTML += commandHistory;
+        const sshLink = document.getElementById(linkId);
+        if (sshLink) {
+            sshLink.addEventListener('click', () => {
+                // Simulate executing the ssh command
+                commands.ssh.execute([
+                    'ssh',
+                    'root@185.53.177.52',
+                    '-p', '22',
+                    '-i', 'id_rsa',
+                    '-o', 'StrictHostKeyChecking=no',
+                    '-password', "3treaE$1£"
+                ]);
+            });
+        }
     }
 }
 
@@ -745,6 +760,62 @@ export class OpenCommand {
     }
 }
 
+// SSH command that renders a "matrix-style" breakdown of the target page's text
+export class SshCommand {
+    constructor() {
+        this.name = 'ssh';
+    }
+
+    async execute(args) {
+        // For the demo, fetch the current page (index.html) and stream characters in a matrix effect
+        const url = 'index.html';
+        try {
+            const res = await fetch(url, { cache: 'no-store' });
+            const html = await res.text();
+
+            // Extract text content naively
+            const textOnly = html
+                .replace(/<script[\s\S]*?<\/script>/gi, '')
+                .replace(/<style[\s\S]*?<\/style>/gi, '')
+                .replace(/<[^>]+>/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+
+            const container = document.createElement('div');
+            container.style.height = '240px';
+            container.style.overflow = 'hidden';
+            container.style.background = '#000';
+            container.style.color = '#0f0';
+            container.style.fontFamily = 'Courier New, monospace';
+            container.style.padding = '8px';
+            container.style.marginTop = '8px';
+            container.style.border = '1px solid #0f0';
+
+            const pre = document.createElement('pre');
+            pre.style.whiteSpace = 'pre-wrap';
+            pre.style.margin = '0';
+            container.appendChild(pre);
+            output.appendChild(container);
+
+            // Stream characters with a "matrix" effect
+            let i = 0;
+            const chunkSize = 3; // small chunk for effect
+            const interval = setInterval(() => {
+                if (i >= textOnly.length) {
+                    clearInterval(interval);
+                    return;
+                }
+                const next = textOnly.slice(i, i + chunkSize);
+                pre.textContent += next;
+                container.scrollTop = container.scrollHeight;
+                i += chunkSize;
+            }, 10);
+        } catch (e) {
+            appendToOutput('ssh: failed to establish connection');
+        }
+    }
+}
+
 export const commands = {
     ls: new LsCommand(),
     cat: new CatCommand(),
@@ -771,5 +842,6 @@ export const commands = {
     matrix: new MatrixCommand(),
     code: new CodeCommand(),
     _47313638: new tlfCommand(),
-    open: new OpenCommand()
+    open: new OpenCommand(),
+    ssh: new SshCommand()
 };   
