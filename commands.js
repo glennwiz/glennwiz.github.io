@@ -614,6 +614,7 @@ export class HelpCommand {
         - vim: Show vim commands
         - ls: List files and directories.
         - cd <directory>: Change the current directory.
+        - open <file>: Open a supported file (images render inline).
         - ifconfig: Display network configuration.
         - ipconfig: Display network configuration.
         - lsblk: List block devices.
@@ -694,6 +695,56 @@ export class MatrixCommand {
 }
         
 
+// Open files (maps simulated names to real assets and renders images inline)
+export class OpenCommand {
+    constructor() {
+        this.name = "open";
+    }
+
+    execute(args) {
+        const target = args && args[1];
+        if (!target) {
+            appendToOutput("Usage: open <filename>");
+            return;
+        }
+
+        const fileUrlMap = {
+            'ufo_photo.png': '2010_blast_from_the_past.gif',
+            'secret_photo.jpg': '2010_blast_from_the_past.gif',
+            'david_grush_hidden.png': '2010_blast_from_the_past.gif',
+            'proxima_prof.png': '2010_blast_from_the_past.gif',
+            'alien_world.jpg': '2010_blast_from_the_past.gif',
+            'whistleblower.jpg': '2010_blast_from_the_past.gif'
+        };
+
+        let url = fileUrlMap[target];
+        if (!url && /^https?:\/\//i.test(target)) {
+            url = target;
+        }
+
+        if (!url) {
+            appendToOutput(`Cannot open '${target}': file not found`);
+            return;
+        }
+
+        if (/\.(png|jpe?g|gif|webp)$/i.test(url)) {
+            const wrapper = document.createElement('div');
+            const img = document.createElement('img');
+            img.src = url;
+            img.alt = target;
+            img.style.maxWidth = '100%';
+            img.style.marginTop = '8px';
+            const link = document.createElement('div');
+            link.innerHTML = `<a href="${url}" target="_blank" rel="noopener noreferrer">Open in new tab</a>`;
+            wrapper.appendChild(img);
+            wrapper.appendChild(link);
+            output.appendChild(wrapper);
+        } else {
+            window.open(url, '_blank');
+        }
+    }
+}
+
 export const commands = {
     ls: new LsCommand(),
     cat: new CatCommand(),
@@ -719,5 +770,6 @@ export const commands = {
     git: new GitCommand(),
     matrix: new MatrixCommand(),
     code: new CodeCommand(),
-    _47313638: new tlfCommand()
+    _47313638: new tlfCommand(),
+    open: new OpenCommand()
 };   
