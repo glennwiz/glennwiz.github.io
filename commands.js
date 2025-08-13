@@ -7,7 +7,8 @@ import { codeDivs, isAlienBlockVisible } from './terminalScript.js';
 import { is8bitBlockVisible } from './terminalScript.js';
 import { terminalDivs } from './terminalScript.js';
 
-let currentDirectory = ["hidden"];
+let currentDirectory = null;
+let currentPath = [];
 
 function findFolder(obj, folderName) {
     console.log("----Searching for folder: ", folderName);
@@ -151,6 +152,30 @@ let fileSystem = {
     ]
 };
 
+// Initialize current directory (default to root/hidden if present)
+const hiddenFolderInit = fileSystem.folders.find(folder => folder.name === "hidden");
+currentDirectory = hiddenFolderInit || fileSystem;
+currentPath = ['root'];
+if (hiddenFolderInit) {
+    currentPath.push('hidden');
+}
+
+function findChildFolder(parentFolder, folderName) {
+    if (!parentFolder || !parentFolder.folders) return null;
+    return parentFolder.folders.find(f => f.name === folderName) || null;
+}
+
+function formatUnixDate(dt) {
+    return new Date(dt).toLocaleString('en-US', {
+        month: 'short',
+        day: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    });
+}
+
 function appendToOutput(content, isHTML = false) {
     const elem = document.createElement('div');
     if (isHTML) {
@@ -169,20 +194,17 @@ export class LsCommand {
 
     generateListing(currentFolder, depth = 0) {
         let output = '';
-        let prefix = "🗍"; // 'OPEN FILE FOLDER' (U+1F4C2)
+        let prefix = "🗍"; // folder
         output += "\nroot@blackmage:~$ ls\n";
-        // list sub-folders recursively
+        // list sub-folders
         for(const folder of currentFolder.folders) {
             // Example of Unix-like file attributes
             const attributes = 'drwxr-xr-x   1 root root';
 
-            // Format date to Unix-like format
-            const date = new Date(folder.lastWriteTime).toLocaleString('en-US', {month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false});
+            const date = formatUnixDate(folder.lastWriteTime);
+            const lengthDisplay = '-';
 
-            // Length in this context could mean the total size of the files within the folder
-            const length = folder.files.reduce((total, file) => total + file.size, 0);
-
-            output += `${attributes} ${date} ${length} ${prefix} ${folder.name}/\n`;
+            output += `${attributes} ${date} ${lengthDisplay} ${prefix} ${folder.name}/\n`;
         }
 
         // list files in folder
@@ -190,10 +212,10 @@ export class LsCommand {
             // Example of Unix-like file attributes
             const attributes = '-rw-r--r--   1 root root';
 
-            // Format date to Unix-like format
-            const date = new Date(file.lastWriteTime).toLocaleString('en-US', {month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false});
-            prefix = "\uD83D\uDDCE";
-            output += `${attributes} ${date} ${file.size} ${prefix} ${file.name}\n`;
+            const date = formatUnixDate(file.lastWriteTime);
+            const fileSizeDisplay = (file.length !== undefined && file.length !== null) ? file.length : '-';
+            prefix = "\uD83D\uDDCE"; // file
+            output += `${attributes} ${date} ${fileSizeDisplay} ${prefix} ${file.name}\n`;
         }
 
         return output;
@@ -207,31 +229,11 @@ export class LsCommand {
         console.log("------------");
         let result = "";
 
-       
-        console.log("folder is " + currentDirectory)
-        currentDirectory = findFolder(fileSystem, currentDirectory);
-        console.log(currentDirectory);
+        if (!currentDirectory) {
+            currentDirectory = hiddenFolderInit || fileSystem;
+        }
 
-        // Accessing items inside the "hidden" folder
-        const hiddenFolder = fileSystem.folders.find(folder => folder.name === "hidden");
-        const filesInHiddenFolder = hiddenFolder.files;
-        const foldersInHiddenFolder = hiddenFolder.folders;
-        console.log(hiddenFolder);
-        console.log(filesInHiddenFolder);
-        console.log(foldersInHiddenFolder);
-        
-        // Print the files inside the "hidden" folder
-        console.log("Files in the 'hidden' folder:");
-        filesInHiddenFolder.forEach(file => console.log(file.name));
-
-        // Print the folders inside the "hidden" folder
-        console.log("Folders in the 'hidden' folder:");
-        foldersInHiddenFolder.forEach(folder => console.log(folder.name));
-        
-        
-        result = this.generateListing(hiddenFolder);
-        
-
+        result = this.generateListing(currentDirectory);
         output.innerHTML += result;
     }
 }
@@ -245,7 +247,7 @@ export class PwdCommand {
         console.log("pwd")
         console.log(currentDirectory)
         console.log("pwd")
-        const path = "/root/hidden/" + currentDirectory.name +"/";
+        const path = "/" + currentPath.join('/') + "/";
         appendToOutput(path);
     }
 }
@@ -260,35 +262,34 @@ export class CdCommand { //TODO: fix file system
         console.log('arg1 ' + changeToDirectory)
         console.log(fileSystem);
 
-        // Check if the directory exists
-        //loop through the file system and check if the directory exists
-        let folder = findFolder(fileSystem, changeToDirectory);
-        console.log("---");
-        console.log(folder);
-        console.log("---");
-        currentDirectory = folder;
-        console.log("---current---");
-        console.log(currentDirectory);  //TODO: we have the json 
-        console.log("---current---");
-        
-        const noFound = `
-root@blackmage:~$ cd ${changeToDirectory}
-cd : Cannot find path '/root/hidden/${changeToDirectory}' because it does not exist.
-            `; 
-
-        const directoryChanged = `
-root@blackmage:~$ cd ${currentDirectory.name}
-        `;
-        
-        let returnMessage;
-        if(currentDirectory){
-            returnMessage = directoryChanged
-        } 
-        else {
-            returnMessage = noFound
+        if (!changeToDirectory) {
+            output.innerHTML += `\nroot@blackmage:~$ cd\n`;
+            return;
         }
 
-        output.innerHTML += returnMessage;
+        if (changeToDirectory === '..') {
+            if (currentPath.length > 1) {
+                currentPath.pop();
+                // Recompute currentDirectory by walking from root using currentPath
+                let cursor = fileSystem;
+                for (let i = 1; i < currentPath.length; i++) {
+                    cursor = findChildFolder(cursor, currentPath[i]) || cursor;
+                }
+                currentDirectory = cursor;
+            }
+            output.innerHTML += `\nroot@blackmage:~$ cd ..\n`;
+            return;
+        }
+
+        const next = findChildFolder(currentDirectory, changeToDirectory);
+        if (next) {
+            currentDirectory = next;
+            currentPath.push(changeToDirectory);
+            output.innerHTML += `\nroot@blackmage:~$ cd ${changeToDirectory}\n`;
+        } else {
+            const noFound = `\nroot@blackmage:~$ cd ${changeToDirectory}\ncd: cannot find: '/${currentPath.join('/')}/${changeToDirectory}'\n`;
+            output.innerHTML += noFound;
+        }
     }
 }
 
@@ -701,7 +702,7 @@ export const commands = {
     repo: new RepoCommand(),
     clear: new ClearCommand(),
     alien: new AlienCommand(),
-    aitbit: new EightBitCommand(),
+    "8bit": new EightBitCommand(),
     ifconfig: new IfconfigCommand(),
     ipconfig: new IfconfigCommand(),
     lsblk: new LsblkCommand(),
