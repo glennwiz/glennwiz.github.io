@@ -176,6 +176,10 @@ function formatUnixDate(dt) {
     });
 }
 
+function nowTimestamp() {
+    return new Date().toISOString().slice(0, 16).replace('T', ' ');
+}
+
 function appendToOutput(content, isHTML = false) {
     const elem = document.createElement('div');
     if (isHTML) {
@@ -360,7 +364,7 @@ export class MkdirCommand {
             currentDirectory.folders.push({
                 name: newDirectory,
                 mode: "rw-r--r--",
-                lastWriteTime: new Date().toISOString().slice(0, 16).replace('T', ' '),
+                lastWriteTime: nowTimestamp(),
                 length: null,
                 files: [],
                 folders: []
@@ -593,14 +597,14 @@ export class TouchCommand {
         if (exists) {
             // touch on existing file just updates timestamp
             const file = currentDirectory.files.find(f => f.name === fileName);
-            file.lastWriteTime = new Date().toISOString().slice(0, 16).replace('T', ' ');
+            file.lastWriteTime = nowTimestamp();
         } else {
             if (!currentDirectory.files) {
                 currentDirectory.files = [];
             }
             currentDirectory.files.push({
                 mode: "rw-r--r--",
-                lastWriteTime: new Date().toISOString().slice(0, 16).replace('T', ' '),
+                lastWriteTime: nowTimestamp(),
                 length: 0,
                 name: fileName
             });
