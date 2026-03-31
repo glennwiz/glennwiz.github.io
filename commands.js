@@ -298,22 +298,41 @@ export class CatCommand {
         this.name = "cat";
     }
 
-    execute()  {
+    execute(args)  {
+        const target = args && args[1];
+        if (!target) {
+            appendToOutput("Usage: cat <filename>");
+            return;
+        }
 
-        //Need to print out the content of the file this is the readme.txt file
-        //need to implement the cat command
+        // Look up the file in the current directory
+        const file = currentDirectory.files
+            ? currentDirectory.files.find(f => f.name === target)
+            : null;
 
-        const readmeContent = `
-      This is the readme file for the deep secrets. 
-    
-      All the files listed in this directory are highly confidential and are not meant to be shared outside the organisation.
-    
-      Please, handle the files with care.
-      
-      To open a file use the command 'open <filename>'.
-      `;
+        if (!file) {
+            appendToOutput(`cat: ${target}: No such file or directory`);
+            return;
+        }
 
-        output.innerHTML +=readmeContent;
+        // Simulated file contents
+        const fileContents = {
+            'readme.txt': `This is the readme file for the deep secrets.\n\nAll the files listed in this directory are highly confidential and are not meant to be shared outside the organisation.\n\nPlease, handle the files with care.\n\nTo open a file use the command 'open <filename>'.`,
+            'secret_readme.txt': `TOP SECRET - CLASSIFIED\n\nProject Blackmage - Overview\n\nThis document contains information regarding unidentified aerial phenomena (UAP)\nobserved between 2004-2023.\n\nFor authorized personnel only.`,
+            'file1.txt': `Hello World!\nThis is a simple text file.`,
+            'file2.png': `cat: file2.png: binary file (not displayed)`,
+            'topsecret_materials.pdf': `cat: topsecret_materials.pdf: binary file (not displayed)`,
+            'confidential_report.docx': `cat: confidential_report.docx: binary file (not displayed)`,
+        };
+
+        const content = fileContents[target];
+        if (content) {
+            appendToOutput(content);
+        } else if (/\.(png|jpe?g|gif|webp|pdf|docx)$/i.test(target)) {
+            appendToOutput(`cat: ${target}: binary file (not displayed)\nUse 'open ${target}' to view this file.`);
+        } else {
+            appendToOutput(`[contents of ${target}]`);
+        }
     }
 }
 
@@ -322,13 +341,31 @@ export class MkdirCommand {
         this.name = "mkdir";
     }
 
-    execute()  {
-        const newDirectory = commandParts[1];
-        if (!(newDirectory in fileSystem[currentDirectory])) {
-            fileSystem[currentDirectory][newDirectory] = {};
-            output.textContent = 'Created new directory: ' + newDirectory;
+    execute(args)  {
+        const newDirectory = args && args[1];
+        if (!newDirectory) {
+            appendToOutput("Usage: mkdir <directory>");
+            return;
+        }
+
+        // Check if folder already exists
+        const exists = currentDirectory.folders &&
+            currentDirectory.folders.some(f => f.name === newDirectory);
+        if (exists) {
+            appendToOutput(`mkdir: cannot create directory '${newDirectory}': File exists`);
         } else {
-            output.textContent = 'Directory already exists: ' + newDirectory;
+            if (!currentDirectory.folders) {
+                currentDirectory.folders = [];
+            }
+            currentDirectory.folders.push({
+                name: newDirectory,
+                mode: "rw-r--r--",
+                lastWriteTime: new Date().toISOString().slice(0, 16).replace('T', ' '),
+                length: null,
+                files: [],
+                folders: []
+            });
+            appendToOutput(`mkdir: created directory '${newDirectory}'`);
         }
     }
 }
@@ -534,8 +571,7 @@ export class WhoamiCommand {
     }
 
     execute()  {
-        const player = 'root';
-        output.textContent = player;
+        appendToOutput('root');
     }
 }
 
@@ -544,24 +580,67 @@ export class TouchCommand {
         this.name = "touch";
     }
 
-    execute()  {
-        const fileName = command.substring(6);
-        const newFile = document.createElement('span');
-        newFile.textContent = fileName;
-        output.appendChild(newFile);
+    execute(args)  {
+        const fileName = args && args[1];
+        if (!fileName) {
+            appendToOutput("Usage: touch <filename>");
+            return;
+        }
+
+        // Check if file already exists
+        const exists = currentDirectory.files &&
+            currentDirectory.files.some(f => f.name === fileName);
+        if (exists) {
+            // touch on existing file just updates timestamp
+            const file = currentDirectory.files.find(f => f.name === fileName);
+            file.lastWriteTime = new Date().toISOString().slice(0, 16).replace('T', ' ');
+        } else {
+            if (!currentDirectory.files) {
+                currentDirectory.files = [];
+            }
+            currentDirectory.files.push({
+                mode: "rw-r--r--",
+                lastWriteTime: new Date().toISOString().slice(0, 16).replace('T', ' '),
+                length: 0,
+                name: fileName
+            });
+        }
     }
 }
 
 export class RmCommand {
     constructor() {
-        this.name = "rm -rf";
+        this.name = "rm";
     }
 
-    execute()  {
-        const directoryName = command.substring(7);
-        const deletedDirectory = document.createElement('span');
-        deletedDirectory.textContent = directoryName + ' (deleted)';
-        output.appendChild(deletedDirectory);
+    execute(args)  {
+        const target = args && args[1];
+        if (!target) {
+            appendToOutput("Usage: rm <file>");
+            return;
+        }
+
+        // Check if it's a file
+        const fileIdx = currentDirectory.files
+            ? currentDirectory.files.findIndex(f => f.name === target)
+            : -1;
+        if (fileIdx >= 0) {
+            currentDirectory.files.splice(fileIdx, 1);
+            appendToOutput(`removed '${target}'`);
+            return;
+        }
+
+        // Check if it's a directory
+        const folderIdx = currentDirectory.folders
+            ? currentDirectory.folders.findIndex(f => f.name === target)
+            : -1;
+        if (folderIdx >= 0) {
+            currentDirectory.folders.splice(folderIdx, 1);
+            appendToOutput(`removed directory '${target}'`);
+            return;
+        }
+
+        appendToOutput(`rm: cannot remove '${target}': No such file or directory`);
     }
 }
 
@@ -570,9 +649,9 @@ export class EchoCommand {
         this.name = "echo";
     }
 
-    execute()  {
-        const message = command.substring(5);
-        output.textContent = message;
+    execute(args)  {
+        const message = args.slice(1).join(' ');
+        appendToOutput(message);
     }
 }
 
@@ -581,11 +660,33 @@ export class MvCommand {
         this.name = "mv";
     }
 
-    execute()  {
-        const source = args[1];
-        const destination = args[2];
-        const moveMessage = `Moved ${source} to ${destination}`;
-        output.textContent = moveMessage;
+    execute(args)  {
+        const source = args && args[1];
+        const destination = args && args[2];
+        if (!source || !destination) {
+            appendToOutput("Usage: mv <source> <destination>");
+            return;
+        }
+
+        // Find the file in current directory
+        const fileIdx = currentDirectory.files
+            ? currentDirectory.files.findIndex(f => f.name === source)
+            : -1;
+        if (fileIdx >= 0) {
+            currentDirectory.files[fileIdx].name = destination;
+            appendToOutput(`renamed '${source}' -> '${destination}'`);
+        } else {
+            // Check folders
+            const folderIdx = currentDirectory.folders
+                ? currentDirectory.folders.findIndex(f => f.name === source)
+                : -1;
+            if (folderIdx >= 0) {
+                currentDirectory.folders[folderIdx].name = destination;
+                appendToOutput(`renamed '${source}' -> '${destination}'`);
+            } else {
+                appendToOutput(`mv: cannot stat '${source}': No such file or directory`);
+            }
+        }
     }
 }
 
@@ -596,7 +697,7 @@ export class DateCommand {
 
     execute()  {
         const currentDate = new Date().toLocaleString();
-        output.textContent = currentDate;
+        appendToOutput(currentDate);
     }
 }
 
