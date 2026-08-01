@@ -1129,7 +1129,7 @@ export class AutoCommand {
             { cmd: 'mv manifest.txt exfil',       pause: 700 },
             { cmd: 'ls exfil',                    pause: 1400 },
             { cmd: 'echo they were here all along', pause: 1600 },
-            { cmd: 'rm -rf exfil',                pause: 900 },
+            { cmd: 'rm -r exfil',                 pause: 900 },
             { cmd: 'ls',                          pause: 1300 },
             { cmd: 'cd /root',                    pause: 600 },
             { cmd: 'ls',                          pause: 1400 },
@@ -1514,6 +1514,308 @@ export class BtopCommand {
             tickBtopState(btopState);
             paint();
         }, 1000);
+    }
+}
+
+// --- mayhem ----------------------------------------------------------------
+// Anything that would wreck a real box kicks off a scripted meltdown instead.
+// Nothing is actually harmed: the filesystem is rebuilt from a snapshot and
+// every element and style added here is torn down at the end. Escape aborts.
+
+const DESTRUCTIVE_PATTERNS = [
+    /\brm\b[^;|]*\s-{1,2}[a-z]*f/i,              // rm -f, rm -rf, rm -fr
+    /\brm\b[^;|]*--force/i,                       // rm --force
+    /\bformat\b/i,                                // format, format c:
+    /\bmkfs(\.[a-z0-9]+)?\b/i,
+    /\bdd\b[^;|]*\bif=\/dev\/(zero|u?random)/i,
+    /\bshred\b/i,
+    /\bwipefs\b/i,
+    /\b(fdisk|diskpart)\b/i,
+    /\bdel\b[^;|]*\/[sfq]\b/i,                    // del /f /s /q
+    /:\(\)\s*\{[^}]*\}\s*;?\s*:/,                 // fork bomb
+    /\bchmod\b[^;|]*-R[^;|]*\b000\b/i,
+    /\b(halt|poweroff|shutdown)\b[^;|]*-f/i
+];
+
+export function isDestructive(line) {
+    return DESTRUCTIVE_PATTERNS.some(pattern => pattern.test(line));
+}
+
+// Taken once at load, so the meltdown can put everything back afterwards.
+const FS_SNAPSHOT = JSON.stringify(fileSystem);
+
+const GLITCH_CHARS = '▓▒░█▚▞╳⌁‡¿¥§ØÆΔΞ#@%&';
+
+const DOOMED_PATHS = [
+    '/root/hidden/secrets/topsecret_materials.pdf',
+    '/root/hidden/secrets/confidential_report.docx',
+    '/root/hidden/secrets/ufo_photo.png',
+    '/root/hidden/pictures/whistleblower.jpg',
+    '/root/hidden/secret_readme.txt',
+    '/etc/shadow',
+    '/etc/ssh/sshd_config',
+    '/var/log/auth.log',
+    '/var/log/syslog',
+    '/var/spool/archive/ingest.db',
+    '/usr/lib/x86_64-linux-gnu/libc.so.6',
+    '/usr/bin/sudo',
+    '/lib/systemd/systemd',
+    '/boot/vmlinuz-5.15.0-105-generic',
+    '/boot/initrd.img-5.15.0-105-generic',
+    '/home/glenn/.ssh/id_ed25519',
+    '/home/glenn/.bash_history',
+    '/proc/1/ns/mnt',
+    '/dev/sda1',
+    '/'
+];
+
+const EXFIL_HOSTS = [
+    '91.243.88.14:443',
+    '45.77.201.9:8443',
+    '185.220.101.34:9001',
+    '104.244.79.61:443'
+];
+
+const MAYHEM_CSS = `
+@keyframes mayhem-shake {
+  0%   { transform: translate(0px, 0px)   }
+  25%  { transform: translate(-4px, 2px)  }
+  50%  { transform: translate(3px, -3px)  }
+  75%  { transform: translate(-2px, -1px) }
+  100% { transform: translate(4px, 1px)   }
+}
+@keyframes mayhem-flicker {
+  0%, 100% { opacity: 1 }
+  47%      { opacity: 1 }
+  48%      { opacity: 0.25 }
+  52%      { opacity: 1 }
+  73%      { opacity: 0.6 }
+}
+.mayhem-shake  { animation: mayhem-shake 0.13s infinite steps(2); }
+.mayhem-split  { text-shadow: 2px 0 #ff00c1, -2px 0 #00fff9; }
+.mayhem-invert { filter: invert(1) hue-rotate(90deg); }
+#mayhem-overlay {
+  position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+  mix-blend-mode: screen;
+}
+#mayhem-overlay .slice {
+  position: absolute; left: 0; right: 0;
+  background: rgba(0, 255, 249, 0.14);
+  border-top: 1px solid rgba(255, 0, 193, 0.5);
+}
+`;
+
+let mayhemRunning = false;
+let mayhemStyle = null;
+let mayhemOverlay = null;
+let mayhemTimers = [];
+let mayhemKeyHandler = null;
+
+function corrupt(text, intensity) {
+    let out = '';
+    for (const char of text) {
+        out += (char !== ' ' && Math.random() < intensity)
+            ? GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)]
+            : char;
+    }
+    return out;
+}
+
+function mayhemLine(text, color, weight) {
+    const line = document.createElement('div');
+    line.textContent = text;
+    if (color) line.style.color = color;
+    if (weight) line.style.fontWeight = weight;
+    output.appendChild(line);
+    document.getElementById('command-container').scrollIntoView(false);
+    return line;
+}
+
+function startVisualChaos() {
+    mayhemStyle = document.createElement('style');
+    mayhemStyle.textContent = MAYHEM_CSS;
+    document.head.appendChild(mayhemStyle);
+
+    mayhemOverlay = document.createElement('div');
+    mayhemOverlay.id = 'mayhem-overlay';
+    document.body.appendChild(mayhemOverlay);
+
+    document.body.classList.add('mayhem-shake', 'mayhem-split');
+
+    // Tearing: bright bands that jump around the viewport.
+    mayhemTimers.push(setInterval(() => {
+        mayhemOverlay.textContent = '';
+        const bands = 2 + Math.floor(Math.random() * 4);
+        for (let i = 0; i < bands; i++) {
+            const slice = document.createElement('div');
+            slice.className = 'slice';
+            slice.style.top = `${Math.random() * 100}%`;
+            slice.style.height = `${2 + Math.random() * 26}px`;
+            slice.style.transform = `translateX(${(Math.random() - 0.5) * 60}px)`;
+            mayhemOverlay.appendChild(slice);
+        }
+    }, 110));
+
+    // Shove random blocks of the page sideways, then let them snap back.
+    mayhemTimers.push(setInterval(() => {
+        const blocks = Array.from(document.querySelectorAll('#alienBlock, [id="8bitMageBlock"], .text-block, .command-output > div'));
+        if (blocks.length === 0) return;
+        const victim = blocks[Math.floor(Math.random() * blocks.length)];
+        victim.style.transform = `translateX(${(Math.random() - 0.5) * 90}px) skewX(${(Math.random() - 0.5) * 22}deg)`;
+        victim.style.filter = Math.random() < 0.4 ? 'hue-rotate(180deg)' : '';
+        mayhemTimers.push(setTimeout(() => {
+            victim.style.transform = '';
+            victim.style.filter = '';
+        }, 180));
+    }, 160));
+
+    // Occasional full inversion, like a display losing sync.
+    mayhemTimers.push(setInterval(() => {
+        if (Math.random() < 0.35) {
+            document.body.classList.add('mayhem-invert');
+            mayhemTimers.push(setTimeout(() => document.body.classList.remove('mayhem-invert'), 70));
+        }
+    }, 700));
+}
+
+function stopVisualChaos() {
+    for (const timer of mayhemTimers) {
+        clearInterval(timer);
+        clearTimeout(timer);
+    }
+    mayhemTimers = [];
+
+    document.body.classList.remove('mayhem-shake', 'mayhem-split', 'mayhem-invert');
+
+    for (const el of document.querySelectorAll('#alienBlock, [id="8bitMageBlock"], .text-block, .command-output > div')) {
+        el.style.transform = '';
+        el.style.filter = '';
+    }
+
+    if (mayhemOverlay) { mayhemOverlay.remove(); mayhemOverlay = null; }
+    if (mayhemStyle) { mayhemStyle.remove(); mayhemStyle = null; }
+}
+
+// Genuinely empties the in-memory tree, so 'ls' really is bare if you look
+// mid-meltdown. Always paired with restoreFilesystem() in the finally block.
+function wipeFilesystem() {
+    fileSystem.files = [];
+    fileSystem.folders = [];
+    currentDirectory = fileSystem;
+    currentPath = [ROOT_NAME];
+}
+
+function restoreFilesystem() {
+    const fresh = JSON.parse(FS_SNAPSHOT);
+    fileSystem.files = fresh.files;
+    fileSystem.folders = fresh.folders;
+    currentDirectory = homeFolder;
+    currentPath = homePath.slice();
+}
+
+export async function runMayhem(line) {
+    if (mayhemRunning) return;
+    mayhemRunning = true;
+
+    const input = document.getElementById('command-input');
+    input.readOnly = true;
+
+    mayhemKeyHandler = (event) => {
+        if (event.key === 'Escape') mayhemRunning = false;
+        event.preventDefault();
+        event.stopPropagation();
+    };
+    document.addEventListener('keydown', mayhemKeyHandler, true);
+
+    const alive = () => mayhemRunning;
+
+    try {
+        echoCommand(line);
+
+        // Phase 1 - looks like it is just doing its job.
+        await sleep(400);
+        mayhemLine('rm: descending into /', COLOR_LABEL);
+        await sleep(500);
+
+        for (const path of DOOMED_PATHS.slice(0, 5)) {
+            if (!alive()) return;
+            mayhemLine(`removed '${path}'`, COLOR_LABEL);
+            await sleep(180);
+        }
+
+        // Phase 2 - it does not stop.
+        if (!alive()) return;
+        mayhemLine("rm: cannot remove '/proc/1/ns/mnt': Device or resource busy", COLOR_MID);
+        await sleep(400);
+        mayhemLine('rm: continuing anyway', COLOR_HIGH, 'bold');
+        await sleep(600);
+
+        startVisualChaos();
+
+        let delay = 120;
+        for (let i = 0; i < 34; i++) {
+            if (!alive()) return;
+            const path = DOOMED_PATHS[Math.floor(Math.random() * DOOMED_PATHS.length)];
+            const intensity = Math.min(0.5, i / 70);
+            mayhemLine(corrupt(`unlinked ${path}`, intensity), COLOR_HIGH);
+            delay = Math.max(28, delay * 0.9);
+            await sleep(delay);
+        }
+
+        // Phase 3 - somebody else is taking the data.
+        if (!alive()) return;
+        mayhemLine('', null);
+        for (const host of EXFIL_HOSTS) {
+            if (!alive()) return;
+            mayhemLine(`[exfil] opening tunnel  ${host}`, '#00fff9');
+            await sleep(260);
+            const size = (2 + Math.random() * 40).toFixed(1);
+            mayhemLine(`[exfil] POST /ingest    ${size} MiB  ${'█'.repeat(12 + Math.floor(Math.random() * 10))}  ok`, '#00fff9');
+            await sleep(300);
+        }
+        mayhemLine('[exfil] beacon installed, persistence via systemd-timer', '#ff00c1');
+        await sleep(500);
+
+        // Phase 4 - the filesystem is gone.
+        if (!alive()) return;
+        wipeFilesystem();
+        for (let i = 0; i < 12; i++) {
+            if (!alive()) return;
+            mayhemLine(corrupt('SEGFAULT  vfs_unlink  0xDEADBEEF  no such device', 0.15 + i * 0.05), COLOR_HIGH);
+            await sleep(70);
+        }
+
+        // Phase 5 - kernel panic.
+        if (!alive()) return;
+        mayhemLine('', null);
+        mayhemLine('Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-block(0,0)', COLOR_HIGH, 'bold');
+        await sleep(300);
+        mayhemLine('CPU: 3 PID: 1 Comm: systemd Tainted: G      D           5.15.0-105-generic', COLOR_LABEL);
+        await sleep(200);
+        mayhemLine('Call Trace:  panic+0x10b  mount_block_root+0x1e7  prepare_namespace+0x13e', COLOR_LABEL);
+        await sleep(1400);
+
+        // Phase 6 - it was never real.
+        stopVisualChaos();
+        output.innerHTML = '';
+        await sleep(700);
+
+        mayhemLine('-- watchdog tripped, rolling back to snapshot --', COLOR_LABEL);
+        await sleep(900);
+        restoreFilesystem();
+        mayhemLine('filesystem restored.  0 files actually harmed.', COLOR_LOW);
+        await sleep(400);
+        mayhemLine('nice try.', COLOR_MID, 'bold');
+    } finally {
+        mayhemRunning = false;
+        stopVisualChaos();
+        restoreFilesystem();
+        document.removeEventListener('keydown', mayhemKeyHandler, true);
+        mayhemKeyHandler = null;
+        input.readOnly = false;
+        input.value = '';
+        input.focus();
+        document.getElementById('command-container').scrollIntoView(false);
     }
 }
 
