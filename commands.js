@@ -3,46 +3,39 @@ output.className = 'command-output';
 const outputContainer = document.getElementById('output-container');
 outputContainer.appendChild(output);
 
-import { codeDivs, isAlienBlockVisible } from './terminalScript.js';
-import { is8bitBlockVisible } from './terminalScript.js';
-import { terminalDivs } from './terminalScript.js';
+import { codeDivs, terminalDivs } from './terminalScript.js';
+
+const PROMPT = 'root@DarkMage:~$';
+const ROOT_NAME = 'root';
+
+// Shared palette (btop panels, ssh handshake).
+const COLOR_LOW = '#00cc6d';
+const COLOR_MID = '#ffcc00';
+const COLOR_HIGH = '#ff4d4d';
+const COLOR_FRAME = '#2393ee';
+const COLOR_LABEL = '#8a8a8a';
+const COLOR_TRACK = '#2f2f2f';
 
 let currentDirectory = null;
 let currentPath = [];
 
-function findFolder(obj, folderName) {
-    console.log("----Searching for folder: ", folderName);
-    console.log(obj)
-    if(obj.name === folderName){
-        console.log("1----Folder Found: ", obj);
-        return obj;
-    }
-
-    for(let i=0; i<obj.folders.length; i++){
-        let found = findFolder(obj.folders[i], folderName);
-        if(found) {
-            console.log("2---->Folder Found: ", found);
-            return found;
-        }
-    }
-    console.log("9999---->-Folder not found");
-    return null;
-}
-
+// length is always bytes, lastWriteTime is always "YYYY-MM-DD HH:MM".
+// Text files carry a `content` string; anything without one is treated as
+// binary by cat and has to go through `open`.
 let fileSystem = {
-    name: "root",
-    mode: "rw-r--r--",
+    name: ROOT_NAME,
+    mode: "drwxr-xr-x",
     lastWriteTime: "2023-01-03 10:13",
-    length: 12354,
     files: [
         {
-            mode: "rw-r--r--",
+            mode: "-rw-r--r--",
             lastWriteTime: "2023-01-03 10:13",
             length: 12354,
-            name: "file1.txt"
+            name: "file1.txt",
+            content: "Nothing to see here. Move along.\n"
         },
         {
-            mode: "rw-r--r--",
+            mode: "-rw-r--r--",
             lastWriteTime: "2023-01-05 14:15",
             length: 765,
             name: "file2.png"
@@ -51,98 +44,121 @@ let fileSystem = {
     folders: [
         {
             name: "hidden",
-            mode: "rw-r--r--",
+            mode: "drwxr-xr-x",
             lastWriteTime: "2023-01-03 10:13",
-            length: 12354,
             files: [
                 {
-                    mode: "rw-r--r--",
+                    mode: "-rw-r--r--",
                     lastWriteTime: "2023-01-06 04:23",
                     length: 56123,
-                    name: "secret_readme.txt"
-                },                
+                    name: "secret_readme.txt",
+                    content: `If you are reading this, you already went further than you should have.
+
+Two directories below this one. Everything the committee denied exists
+is in 'secrets'. The photographs are in 'pictures'.
+
+Use 'open <filename>' for anything that is not text.
+`
+                },
             ],
             folders: [
                 {
-                    mode: "rw-r--r--",
+                    mode: "drwxr-xr-x",
                     lastWriteTime: "2023-01-03 10:13",
-                    length: null,
-                    name : "pictures",
-                    "files": [
+                    name: "pictures",
+                    files: [
                         {
-                            "mode": "-a---",
-                            "lastWriteTime": "07/06/2023 22:00",
-                            "length": "1.5MB",
-                            "name": "alien_world.jpg"
+                            mode: "-rw-r--r--",
+                            lastWriteTime: "2023-06-07 22:00",
+                            length: 1572864,
+                            name: "alien_world.jpg"
                         },
                         {
-                            "mode": "-a---",
-                            "lastWriteTime": "07/06/2023 22:05",
-                            "length": "1.8MB",
-                            "name": "david_grush_hidden.png"
+                            mode: "-rw-r--r--",
+                            lastWriteTime: "2023-06-07 22:05",
+                            length: 1887437,
+                            name: "david_grush_hidden.png"
                         },
                         {
-                            "mode": "-a---",
-                            "lastWriteTime": "07/06/2023 22:10",
-                            "length": "2.1MB",
-                            "name": "whistleblower.jpg"
+                            mode: "-rw-r--r--",
+                            lastWriteTime: "2023-06-07 22:10",
+                            length: 2202010,
+                            name: "whistleblower.jpg"
                         },
                         {
-                            "mode": "-a---",
-                            "lastWriteTime": "07/06/2023 22:15",
-                            "length": "2.5MB",
-                            "name": "proxima_prof.png"
+                            mode: "-rw-r--r--",
+                            lastWriteTime: "2023-06-07 22:15",
+                            length: 2621440,
+                            name: "proxima_prof.png"
                         },
                         {
-                            "mode": "-a---",
-                            "lastWriteTime": "07/06/2023 23:33",
-                            "length": "0.1MB",
-                            "name": "readme.txt"
+                            mode: "-rw-r--r--",
+                            lastWriteTime: "2023-06-07 23:33",
+                            length: 102400,
+                            name: "readme.txt",
+                            content: `Recovered imagery, unprocessed.
+
+Provenance for every frame in this directory is disputed. Four of the six
+have no chain of custody at all. Treat accordingly.
+`
                         }
                     ],
                     folders: []
                 },
                 {
-                    mode: "rw-r--r--",
+                    mode: "drwxr-xr-x",
                     lastWriteTime: "2023-01-03 10:13",
-                    length: null,
-                    name : "secrets",
+                    name: "secrets",
                     files: [
                         {
-                            "mode": "rw-r--r--",
-                            "lastWriteTime": "2023-01-06 04:23",
-                            "length": 56123,
-                            "name": "secret_readme.txt"
+                            mode: "-rw-r--r--",
+                            lastWriteTime: "2023-01-06 04:23",
+                            length: 56123,
+                            name: "secret_readme.txt",
+                            content: `DEEP ARCHIVE - RESTRICTED
+
+All files listed in this directory are highly confidential and are not
+meant to be shared outside the organisation.
+
+Please handle the files with care.
+
+To open a file use the command 'open <filename>'.
+`
                         },
                         {
-                            "mode": "-a---",
-                            "lastWriteTime": "07/06/2023 21:30",
-                            "length": "564KB",
-                            "name": "topsecret_materials.pdf"
+                            mode: "-rw-r--r--",
+                            lastWriteTime: "2023-06-07 21:30",
+                            length: 577536,
+                            name: "topsecret_materials.pdf"
                         },
                         {
-                            "mode": "-a---",
-                            "lastWriteTime": "07/06/2023 21:32",
-                            "length": "1.2MB",
-                            "name": "ufo_photo.png"
+                            mode: "-rw-r--r--",
+                            lastWriteTime: "2023-06-07 21:32",
+                            length: 1258291,
+                            name: "ufo_photo.png"
                         },
                         {
-                            "mode": "-a---",
-                            "lastWriteTime": "07/06/2023 21:35",
-                            "length": "876KB",
-                            "name": "secret_photo.jpg"
+                            mode: "-rw-r--r--",
+                            lastWriteTime: "2023-06-07 21:35",
+                            length: 897024,
+                            name: "secret_photo.jpg"
                         },
                         {
-                            "mode": "-a---",
-                            "lastWriteTime": "07/06/2023 21:38",
-                            "length": "2.3MB",
-                            "name": "confidential_report.docx"
+                            mode: "-rw-r--r--",
+                            lastWriteTime: "2023-06-07 21:38",
+                            length: 2411724,
+                            name: "confidential_report.docx"
                         },
                         {
-                            "mode": "-a---",
-                            "lastWriteTime": "07/06/2023 23:33",
-                            "length": "0.1MB",
-                            "name": "readme.txt"
+                            mode: "-rw-r--r--",
+                            lastWriteTime: "2023-06-07 23:33",
+                            length: 102400,
+                            name: "readme.txt",
+                            content: `Index is incomplete. Three items were pulled before this archive
+was sealed and never came back.
+
+Do not ask which three.
+`
                         }
                     ],
                     folders: []
@@ -152,17 +168,85 @@ let fileSystem = {
     ]
 };
 
-// Initialize current directory (default to root/hidden if present)
-const hiddenFolderInit = fileSystem.folders.find(folder => folder.name === "hidden");
-currentDirectory = hiddenFolderInit || fileSystem;
-currentPath = ['root'];
-if (hiddenFolderInit) {
-    currentPath.push('hidden');
-}
+// Home is root/hidden if it exists, so the interesting stuff is one 'ls' away.
+const homeFolder = fileSystem.folders.find(folder => folder.name === "hidden") || fileSystem;
+const homePath = homeFolder === fileSystem ? [ROOT_NAME] : [ROOT_NAME, "hidden"];
+currentDirectory = homeFolder;
+currentPath = homePath.slice();
 
 function findChildFolder(parentFolder, folderName) {
     if (!parentFolder || !parentFolder.folders) return null;
     return parentFolder.folders.find(f => f.name === folderName) || null;
+}
+
+function findChildFile(parentFolder, fileName) {
+    if (!parentFolder || !parentFolder.files) return null;
+    return parentFolder.files.find(f => f.name === fileName) || null;
+}
+
+// Walk a path array like ['root', 'hidden', 'secrets'] back to its folder.
+function folderAtPath(path) {
+    let cursor = fileSystem;
+    for (let i = 1; i < path.length; i++) {
+        cursor = findChildFolder(cursor, path[i]) || cursor;
+    }
+    return cursor;
+}
+
+// Turn a user-typed path into a node. Handles absolute ('/root/hidden'),
+// relative ('secrets/readme.txt'), '.' and '..'.
+// Returns { node, path, type: 'folder' | 'file' }, or null if nothing is there.
+function resolvePath(pathStr) {
+    if (!pathStr) return null;
+
+    const isAbsolute = pathStr.startsWith('/');
+    let node = isAbsolute ? fileSystem : currentDirectory;
+    let path = isAbsolute ? [ROOT_NAME] : currentPath.slice();
+
+    const segments = pathStr.split('/').filter(segment => segment.length > 0);
+
+    // '/root/hidden' and '/hidden' should both mean the same thing.
+    if (isAbsolute && segments[0] === ROOT_NAME) {
+        segments.shift();
+    }
+
+    for (let i = 0; i < segments.length; i++) {
+        const segment = segments[i];
+
+        if (segment === '.') continue;
+
+        if (segment === '..') {
+            if (path.length > 1) {
+                path.pop();
+                node = folderAtPath(path);
+            }
+            continue;
+        }
+
+        const childFolder = findChildFolder(node, segment);
+        if (childFolder) {
+            node = childFolder;
+            path.push(segment);
+            continue;
+        }
+
+        // A file is only valid as the very last segment of a path.
+        const childFile = findChildFile(node, segment);
+        if (childFile && i === segments.length - 1) {
+            return { node: childFile, path: path.concat(segment), type: 'file' };
+        }
+
+        return null;
+    }
+
+    return { node, path, type: 'folder' };
+}
+
+// Timestamp for files created during the session, in the same shape as the data.
+function nowStamp() {
+    const pad = n => String(n).padStart(2, '0');
+    const d = new Date();
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
 function formatUnixDate(dt) {
@@ -186,55 +270,134 @@ function appendToOutput(content, isHTML = false) {
     output.append(elem);
 }
 
+// Echo the command back the way a real shell does, above its own output.
+function echoCommand(line) {
+    appendToOutput(`\n${PROMPT} ${line}`);
+}
+
+// --- command history -------------------------------------------------------
+// Session-only: a reload starts fresh, which is what the original code intended.
+const commandHistory = [];
+
+export function pushHistory(line) {
+    const trimmed = line.trim();
+    if (!trimmed) return;
+    // Don't record the same command twice in a row, like a real shell.
+    if (commandHistory[commandHistory.length - 1] === trimmed) return;
+    commandHistory.push(trimmed);
+}
+
+export function getHistory() {
+    return commandHistory;
+}
+
+// --- tab completion --------------------------------------------------------
+// Given the whole input line, return the possible completions for its last word.
+export function getCompletions(line) {
+    const parts = line.split(' ');
+    const word = parts[parts.length - 1];
+
+    // First word: complete command names. Skip the full-line aliases (they
+    // contain spaces) and anything starting with '_' so easter eggs stay hidden.
+    if (parts.length === 1) {
+        return Object.keys(commands)
+            .filter(name => !name.includes(' ') && !name.startsWith('_'))
+            .filter(name => name.startsWith(word))
+            .sort();
+    }
+
+    // Later words: complete against the filesystem, honouring any path prefix.
+    const slash = word.lastIndexOf('/');
+    const dirPart = slash === -1 ? '' : word.slice(0, slash + 1);
+    const namePart = slash === -1 ? word : word.slice(slash + 1);
+
+    let folder = currentDirectory;
+    if (dirPart) {
+        const resolved = resolvePath(dirPart);
+        if (!resolved || resolved.type !== 'folder') return [];
+        folder = resolved.node;
+    }
+
+    return [
+        ...folder.folders.map(entry => entry.name + '/'),
+        ...folder.files.map(entry => entry.name)
+    ]
+        .filter(name => name.startsWith(namePart))
+        .sort()
+        .map(name => dirPart + name);
+}
+
+// Bash-style: when a Tab is ambiguous, echo the line and list the options.
+export function printCompletions(line, matches) {
+    appendToOutput(`\n${PROMPT} ${line}`);
+    appendToOutput(matches.join('   '));
+}
+
+// Show/hide one of the ASCII art blocks. Reads the rendered state rather than
+// tracking a flag, since imported module bindings are read-only.
+function toggleBlock(elementId) {
+    const element = document.getElementById(elementId);
+    if (!element) return;
+    element.style.display = getComputedStyle(element).display === 'none' ? 'block' : 'none';
+}
+
 export class LsCommand {
-    constructor(fileSystem) {
+    constructor() {
         this.name = "ls";
-        this.fileSystem = fileSystem;
     }
 
-    generateListing(currentFolder, depth = 0) {
-        let output = '';
-        let prefix = "🗍"; // folder
-        output += "\nroot@blackmage:~$ ls\n";
-        // list sub-folders
-        for(const folder of currentFolder.folders) {
-            // Example of Unix-like file attributes
-            const attributes = 'drwxr-xr-x   1 root root';
+    generateListing(folder) {
+        const folderIcon = "🗍";
+        const fileIcon = "🗎";
+        const rows = [];
 
-            const date = formatUnixDate(folder.lastWriteTime);
-            const lengthDisplay = '-';
-
-            output += `${attributes} ${date} ${lengthDisplay} ${prefix} ${folder.name}/\n`;
+        for (const child of folder.folders) {
+            rows.push({
+                mode: child.mode || 'drwxr-xr-x',
+                date: formatUnixDate(child.lastWriteTime),
+                size: '-',
+                icon: folderIcon,
+                name: `${child.name}/`
+            });
         }
 
-        // list files in folder
-        for(const file of currentFolder.files) {
-            // Example of Unix-like file attributes
-            const attributes = '-rw-r--r--   1 root root';
-
-            const date = formatUnixDate(file.lastWriteTime);
-            const fileSizeDisplay = (file.length !== undefined && file.length !== null) ? file.length : '-';
-            prefix = "\uD83D\uDDCE"; // file
-            output += `${attributes} ${date} ${fileSizeDisplay} ${prefix} ${file.name}\n`;
+        for (const file of folder.files) {
+            rows.push({
+                mode: file.mode || '-rw-r--r--',
+                date: formatUnixDate(file.lastWriteTime),
+                size: (file.length === undefined || file.length === null) ? '-' : String(file.length),
+                icon: fileIcon,
+                name: file.name
+            });
         }
 
-        return output;
+        // Right-align the size column so the listing lines up.
+        const sizeWidth = rows.reduce((widest, row) => Math.max(widest, row.size.length), 0);
+
+        return rows
+            .map(row => `${row.mode}   1 root root ${row.date} ${row.size.padStart(sizeWidth)} ${row.icon} ${row.name}`)
+            .join('\n');
     }
-    
-    execute() {
-        console.log("ls command executed");
-        console.log(fileSystem)
-        console.log("------------");
-        console.log(currentDirectory)
-        console.log("------------");
-        let result = "";
 
-        if (!currentDirectory) {
-            currentDirectory = hiddenFolderInit || fileSystem;
+    execute(args) {
+        const target = args && args[1];
+        echoCommand(target ? `ls ${target}` : 'ls');
+
+        let folder = currentDirectory;
+        if (target) {
+            const resolved = resolvePath(target);
+            if (!resolved) {
+                appendToOutput(`ls: cannot access '${target}': No such file or directory`);
+                return;
+            }
+            if (resolved.type === 'file') {
+                appendToOutput(resolved.node.name);
+                return;
+            }
+            folder = resolved.node;
         }
 
-        result = this.generateListing(currentDirectory);
-        output.innerHTML += result;
+        appendToOutput(this.generateListing(folder));
     }
 }
 
@@ -244,52 +407,39 @@ export class PwdCommand {
     }
 
     execute() {
-        console.log("pwd")
-        console.log(currentDirectory)
-        console.log("pwd")
-        const path = "/" + currentPath.join('/') + "/";
-        appendToOutput(path);
+        echoCommand('pwd');
+        appendToOutput('/' + currentPath.join('/'));
     }
 }
 
-export class CdCommand { //TODO: fix file system
+export class CdCommand {
     constructor() {
         this.name = "cd";
     }
-    execute(myArgs)  {
-        console.log('cd');
-        const changeToDirectory = myArgs[1];
-        console.log('arg1 ' + changeToDirectory)
-        console.log(fileSystem);
 
-        if (!changeToDirectory) {
-            output.innerHTML += `\nroot@blackmage:~$ cd\n`;
+    execute(args) {
+        const target = args && args[1];
+        echoCommand(target ? `cd ${target}` : 'cd');
+
+        // Bare 'cd' goes home, like a real shell.
+        if (!target || target === '~') {
+            currentDirectory = homeFolder;
+            currentPath = homePath.slice();
             return;
         }
 
-        if (changeToDirectory === '..') {
-            if (currentPath.length > 1) {
-                currentPath.pop();
-                // Recompute currentDirectory by walking from root using currentPath
-                let cursor = fileSystem;
-                for (let i = 1; i < currentPath.length; i++) {
-                    cursor = findChildFolder(cursor, currentPath[i]) || cursor;
-                }
-                currentDirectory = cursor;
-            }
-            output.innerHTML += `\nroot@blackmage:~$ cd ..\n`;
+        const resolved = resolvePath(target);
+        if (!resolved) {
+            appendToOutput(`cd: no such file or directory: ${target}`);
+            return;
+        }
+        if (resolved.type === 'file') {
+            appendToOutput(`cd: not a directory: ${target}`);
             return;
         }
 
-        const next = findChildFolder(currentDirectory, changeToDirectory);
-        if (next) {
-            currentDirectory = next;
-            currentPath.push(changeToDirectory);
-            output.innerHTML += `\nroot@blackmage:~$ cd ${changeToDirectory}\n`;
-        } else {
-            const noFound = `\nroot@blackmage:~$ cd ${changeToDirectory}\ncd: cannot find: '/${currentPath.join('/')}/${changeToDirectory}'\n`;
-            output.innerHTML += noFound;
-        }
+        currentDirectory = resolved.node;
+        currentPath = resolved.path;
     }
 }
 
@@ -298,22 +448,30 @@ export class CatCommand {
         this.name = "cat";
     }
 
-    execute()  {
+    execute(args) {
+        const target = args && args[1];
+        echoCommand(target ? `cat ${target}` : 'cat');
 
-        //Need to print out the content of the file this is the readme.txt file
-        //need to implement the cat command
+        if (!target) {
+            appendToOutput('usage: cat <file>');
+            return;
+        }
 
-        const readmeContent = `
-      This is the readme file for the deep secrets. 
-    
-      All the files listed in this directory are highly confidential and are not meant to be shared outside the organisation.
-    
-      Please, handle the files with care.
-      
-      To open a file use the command 'open <filename>'.
-      `;
+        const resolved = resolvePath(target);
+        if (!resolved) {
+            appendToOutput(`cat: ${target}: No such file or directory`);
+            return;
+        }
+        if (resolved.type === 'folder') {
+            appendToOutput(`cat: ${target}: Is a directory`);
+            return;
+        }
+        if (resolved.node.content === undefined) {
+            appendToOutput(`cat: ${target}: binary file (try 'open ${target}')`);
+            return;
+        }
 
-        output.innerHTML +=readmeContent;
+        appendToOutput(resolved.node.content);
     }
 }
 
@@ -322,14 +480,26 @@ export class MkdirCommand {
         this.name = "mkdir";
     }
 
-    execute()  {
-        const newDirectory = commandParts[1];
-        if (!(newDirectory in fileSystem[currentDirectory])) {
-            fileSystem[currentDirectory][newDirectory] = {};
-            output.textContent = 'Created new directory: ' + newDirectory;
-        } else {
-            output.textContent = 'Directory already exists: ' + newDirectory;
+    execute(args) {
+        const name = args && args[1];
+        echoCommand(name ? `mkdir ${name}` : 'mkdir');
+
+        if (!name) {
+            appendToOutput('usage: mkdir <directory>');
+            return;
         }
+        if (findChildFolder(currentDirectory, name) || findChildFile(currentDirectory, name)) {
+            appendToOutput(`mkdir: cannot create directory '${name}': File exists`);
+            return;
+        }
+
+        currentDirectory.folders.push({
+            name: name,
+            mode: 'drwxr-xr-x',
+            lastWriteTime: nowStamp(),
+            files: [],
+            folders: []
+        });
     }
 }
 
@@ -392,14 +562,7 @@ export class AlienCommand {
     }
 
     execute()  {
-        var element = document.getElementById('alienBlock');
-        if (!isAlienBlockVisible) {       // if the block is not visible
-            element.style.display = '';    // make it visible
-            isAlienBlockVisible = true;    // update our flag
-        } else {                           // if the block is already visible
-            element.style.display = 'none';// hide it,
-            isAlienBlockVisible = false;   // update our flag
-        }
+        toggleBlock('alienBlock');
     }
 }
 
@@ -409,14 +572,7 @@ export class EightBitCommand {
     }
 
     execute()  {
-        var element = document.getElementById('8bitMageBlock');
-        if (!is8bitBlockVisible) {       // if the block is not visible
-            element.style.display = '';    // make it visible
-            is8bitBlockVisible = true;    // update our flag
-        } else {                           // if the block is already visible
-            element.style.display = 'none';// hide it,
-            is8bitBlockVisible = false;   // update our flag
-        }
+        toggleBlock('8bitMageBlock');
     }
 }
 
@@ -427,7 +583,7 @@ export class IfconfigCommand {
 
     execute() {
         const ipInfo = `
-root@blackmage:~$ ipconfig        
+${PROMPT} ipconfig        
         
 Windows IP Configuration
 
@@ -463,7 +619,7 @@ export class LsblkCommand {
 
     execute()  {
         const blockDevicesListing = `
-root@blackmage:~$ lsblk
+${PROMPT} lsblk
 
 NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
 sda      8:0    0   20G  0 disk 
@@ -506,23 +662,19 @@ export class HistoryCommand {
     }
 
     execute()  {
-        const commandHistory = `
-        
+        echoCommand('history');
 
-  1  ls
-  2  cd secrets
-  3  ifconfig
-  4  lsblk
-  5  top
-  6  cat myfile.txt
-  7  cp file1.txt file2.txt
-  8  mv file.txt newdir/
-  9  mkdir newdir
- 10  rm myfile.txt
- 11  ssh root@185.53.177.52 -p 22 -i id_rsa -o StrictHostKeyChecking=no -password '3treaE$1£'
-        `;
+        const entries = getHistory();
+        if (entries.length === 0) {
+            appendToOutput('(no history yet)');
+            return;
+        }
 
-        output.innerHTML += commandHistory;
+        appendToOutput(
+            entries
+                .map((entry, index) => `${String(index + 1).padStart(4)}  ${entry}`)
+                .join('\n')
+        );
     }
 }
 
@@ -534,8 +686,8 @@ export class WhoamiCommand {
     }
 
     execute()  {
-        const player = 'root';
-        output.textContent = player;
+        echoCommand('whoami');
+        appendToOutput('root');
     }
 }
 
@@ -544,24 +696,68 @@ export class TouchCommand {
         this.name = "touch";
     }
 
-    execute()  {
-        const fileName = command.substring(6);
-        const newFile = document.createElement('span');
-        newFile.textContent = fileName;
-        output.appendChild(newFile);
+    execute(args)  {
+        const name = args && args[1];
+        echoCommand(name ? `touch ${name}` : 'touch');
+
+        if (!name) {
+            appendToOutput('usage: touch <file>');
+            return;
+        }
+
+        const existing = findChildFile(currentDirectory, name);
+        if (existing) {
+            existing.lastWriteTime = nowStamp();
+            return;
+        }
+        if (findChildFolder(currentDirectory, name)) {
+            appendToOutput(`touch: cannot touch '${name}': Is a directory`);
+            return;
+        }
+
+        currentDirectory.files.push({
+            name: name,
+            mode: '-rw-r--r--',
+            lastWriteTime: nowStamp(),
+            length: 0,
+            content: ''
+        });
     }
 }
 
 export class RmCommand {
     constructor() {
-        this.name = "rm -rf";
+        this.name = "rm";
     }
 
-    execute()  {
-        const directoryName = command.substring(7);
-        const deletedDirectory = document.createElement('span');
-        deletedDirectory.textContent = directoryName + ' (deleted)';
-        output.appendChild(deletedDirectory);
+    execute(args)  {
+        // Accept the flags without acting on them, so 'rm -rf dir' works.
+        const operands = (args || []).slice(1).filter(arg => !arg.startsWith('-'));
+        const recursive = (args || []).some(arg => /^-\w*r/i.test(arg));
+        const name = operands[0];
+        echoCommand(`rm ${(args || []).slice(1).join(' ')}`.trim());
+
+        if (!name) {
+            appendToOutput('usage: rm [-rf] <file>');
+            return;
+        }
+
+        const fileIndex = currentDirectory.files.findIndex(f => f.name === name);
+        if (fileIndex !== -1) {
+            currentDirectory.files.splice(fileIndex, 1);
+            return;
+        }
+
+        const folderIndex = currentDirectory.folders.findIndex(f => f.name === name);
+        if (folderIndex === -1) {
+            appendToOutput(`rm: cannot remove '${name}': No such file or directory`);
+            return;
+        }
+        if (!recursive) {
+            appendToOutput(`rm: cannot remove '${name}': Is a directory`);
+            return;
+        }
+        currentDirectory.folders.splice(folderIndex, 1);
     }
 }
 
@@ -570,9 +766,10 @@ export class EchoCommand {
         this.name = "echo";
     }
 
-    execute()  {
-        const message = command.substring(5);
-        output.textContent = message;
+    execute(args)  {
+        const message = (args || []).slice(1).join(' ');
+        echoCommand(`echo ${message}`.trim());
+        appendToOutput(message);
     }
 }
 
@@ -581,11 +778,34 @@ export class MvCommand {
         this.name = "mv";
     }
 
-    execute()  {
-        const source = args[1];
-        const destination = args[2];
-        const moveMessage = `Moved ${source} to ${destination}`;
-        output.textContent = moveMessage;
+    execute(args)  {
+        const source = args && args[1];
+        const destination = args && args[2];
+        echoCommand(`mv ${[source, destination].filter(Boolean).join(' ')}`.trim());
+
+        if (!source || !destination) {
+            appendToOutput('usage: mv <source> <destination>');
+            return;
+        }
+
+        const entry = findChildFile(currentDirectory, source)
+            || findChildFolder(currentDirectory, source);
+        if (!entry) {
+            appendToOutput(`mv: cannot stat '${source}': No such file or directory`);
+            return;
+        }
+
+        // Moving into an existing directory keeps the name; otherwise it's a rename.
+        const targetFolder = findChildFolder(currentDirectory, destination);
+        if (targetFolder) {
+            const list = findChildFile(currentDirectory, source) ? 'files' : 'folders';
+            currentDirectory[list].splice(currentDirectory[list].indexOf(entry), 1);
+            targetFolder[list].push(entry);
+            return;
+        }
+
+        entry.name = destination;
+        entry.lastWriteTime = nowStamp();
     }
 }
 
@@ -595,8 +815,8 @@ export class DateCommand {
     }
 
     execute()  {
-        const currentDate = new Date().toLocaleString();
-        output.textContent = currentDate;
+        echoCommand('date');
+        appendToOutput(new Date().toLocaleString());
     }
 }
 
@@ -608,7 +828,8 @@ export class HelpCommand {
     execute()  {
         const availableCommands = `
         Available Commands:
-        - help: Show available commands.         
+        - help: Show available commands.
+        - auto: Watch someone break in (Escape to stop).
         - git: Show the git info.
         - code: Show snippets
         - vim: Show vim commands
@@ -619,6 +840,7 @@ export class HelpCommand {
         - ipconfig: Display network configuration.
         - lsblk: List block devices.
         - top: Display system processes.
+        - btop: Live resource monitor (q or esc to quit).
         - history: Show command history.
         - cat <file>: Display the content of a file.
         - cp <source> <destination>: Copy a file or directory.
@@ -654,13 +876,12 @@ export class GitCommand {
     }
 
     execute() {
-        // Show or hide terminal divs 
+        // Show or hide terminal divs
+        // Read the computed style, not the inline one, so the first toggle
+        // works while they are still hidden by the stylesheet.
         Array.from(terminalDivs).forEach(div => {
-            if (div.style.display === "none") {
-                div.style.display = "block";
-            } else {
-                div.style.display = "none";
-            }
+            const isHidden = getComputedStyle(div).display === "none";
+            div.style.display = isHidden ? "block" : "none";
         });
     }
 }
@@ -671,13 +892,10 @@ export class CodeCommand {
     }
 
     execute() {
-        // Show or hide terminal divs 
+        // Show or hide code divs
         Array.from(codeDivs).forEach(div => {
-            if (div.style.display === "none") {
-                div.style.display = "block";
-            } else {
-                div.style.display = "none";
-            }
+            const isHidden = getComputedStyle(div).display === "none";
+            div.style.display = isHidden ? "block" : "none";
         });
     }
 }
@@ -703,8 +921,10 @@ export class OpenCommand {
 
     execute(args) {
         const target = args && args[1];
+        echoCommand(target ? `open ${target}` : 'open');
+
         if (!target) {
-            appendToOutput("Usage: open <filename>");
+            appendToOutput("usage: open <filename>");
             return;
         }
 
@@ -717,13 +937,24 @@ export class OpenCommand {
             'whistleblower.jpg': '2010_blast_from_the_past.gif'
         };
 
-        let url = fileUrlMap[target];
+        // Accept a path, not just a bare name, so 'open pictures/ufo_photo.png' works.
+        const resolved = resolvePath(target);
+        const name = resolved && resolved.type === 'file' ? resolved.node.name : target;
+
+        let url = fileUrlMap[name];
+
+        // A text file we know about opens in the terminal rather than a tab.
+        if (!url && resolved && resolved.type === 'file' && resolved.node.content !== undefined) {
+            appendToOutput(resolved.node.content);
+            return;
+        }
+
         if (!url && /^https?:\/\//i.test(target)) {
             url = target;
         }
 
         if (!url) {
-            appendToOutput(`Cannot open '${target}': file not found`);
+            appendToOutput(`open: cannot open '${target}': No such file or directory`);
             return;
         }
 
@@ -745,13 +976,66 @@ export class OpenCommand {
     }
 }
 
+// A plausible OpenSSH negotiation. [delay before the line, text, colour].
+const SSH_HANDSHAKE = [
+    [0,   'OpenSSH_9.6p1, OpenSSL 3.0.13 30 Jan 2024', COLOR_LABEL],
+    [90,  'debug1: Reading configuration data /etc/ssh/ssh_config', COLOR_LABEL],
+    [140, 'debug1: Connecting to 185.53.177.52 [185.53.177.52] port 22.', COLOR_LABEL],
+    [620, 'debug1: Connection established.', COLOR_LABEL],
+    [120, 'debug1: identity file id_rsa type 0', COLOR_LABEL],
+    [90,  'debug1: Local version string SSH-2.0-OpenSSH_9.6p1', COLOR_LABEL],
+    [260, 'debug1: Remote protocol version 2.0, remote software version OpenSSH_8.9p1 Ubuntu-3ubuntu0.10', COLOR_LABEL],
+    [150, "debug1: Authenticating to 185.53.177.52:22 as 'root'", COLOR_LABEL],
+    [110, 'debug1: SSH2_MSG_KEXINIT sent', COLOR_LABEL],
+    [180, 'debug1: SSH2_MSG_KEXINIT received', COLOR_LABEL],
+    [140, 'debug1: kex: algorithm: curve25519-sha256', COLOR_LABEL],
+    [70,  'debug1: kex: host key algorithm: ssh-ed25519', COLOR_LABEL],
+    [70,  'debug1: kex: server->client cipher: chacha20-poly1305@openssh.com', COLOR_LABEL],
+    [330, 'debug1: Server host key: ssh-ed25519 SHA256:9Xk2Qv7mB1oLdR4tYs0FzNcHpEuJwAaG3iKvTnMbQxU', COLOR_LABEL],
+    [240, "Warning: Permanently added '185.53.177.52' (ED25519) to the list of known hosts.", COLOR_MID],
+    [380, 'debug1: Offering public key: id_rsa RSA SHA256:tR8vN2LqCmZ5wXeJfPdA1yHkUoB7sGnQ4iVbMxKcT0E', COLOR_LABEL],
+    [420, 'debug1: Server accepts key: id_rsa', COLOR_LABEL],
+    [300, 'debug1: Authentication succeeded (publickey).', COLOR_LABEL],
+    [80,  'Authenticated to 185.53.177.52 ([185.53.177.52]:22).', COLOR_LOW],
+    [120, 'debug1: channel 0: new session', COLOR_LABEL],
+    [90,  'debug1: Entering interactive session.', COLOR_LABEL],
+    [500, '', null],
+    [0,   'Welcome to Ubuntu 22.04.4 LTS (GNU/Linux 5.15.0-105-generic x86_64)', null],
+    [260, '', null],
+    [0,   '  System load:  0.42               Processes:             213', COLOR_LABEL],
+    [60,  '  Usage of /:   61.7% of 19.24GB   Users logged in:       0', COLOR_LABEL],
+    [60,  '  Memory usage: 38%                IPv4 address for eth0: 185.53.177.52', COLOR_LABEL],
+    [60,  '  Swap usage:   8%', COLOR_LABEL],
+    [240, '', null],
+    [0,   '  17 updates can be applied immediately.', COLOR_LABEL],
+    [320, '', null],
+    [0,   'Last login: Tue Jun  6 23:41:08 2023 from 10.0.0.66', COLOR_LABEL],
+    [640, '', null],
+    [0,   'root@archive:~# cat -- /var/spool/archive/*', COLOR_LOW],
+    [520, '', null]
+];
+
 // SSH command that renders a "matrix-style" breakdown of the target page's text
 export class SshCommand {
     constructor() {
         this.name = 'ssh';
     }
 
+    async handshake() {
+        for (const [delay, text, color] of SSH_HANDSHAKE) {
+            if (delay) await sleep(delay);
+            const line = document.createElement('div');
+            line.textContent = text;
+            if (color) line.style.color = color;
+            output.appendChild(line);
+            document.getElementById('command-container').scrollIntoView(false);
+        }
+    }
+
     async execute(args) {
+        echoCommand((args || ['ssh']).join(' '));
+        await this.handshake();
+
         // For the demo, fetch the current page (index.html) and stream characters in a matrix effect
         const url = 'index.html';
         try {
@@ -801,7 +1085,441 @@ export class SshCommand {
     }
 }
 
+// Plays back a scripted intrusion, typing each command a character at a time.
+// Escape aborts it; the keyboard is otherwise locked out while it runs.
+let autoRunning = false;
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function randomBetween(min, max) {
+    return min + Math.random() * (max - min);
+}
+
+export class AutoCommand {
+    constructor() {
+        this.name = "auto";
+    }
+
+    // The story: get oriented, find the hidden archive, read it, poke the box,
+    // stage an exfil directory, clean up after yourself, then jump the wire.
+    get script() {
+        return [
+            { cmd: 'clear',                       pause: 300 },
+            { cmd: 'whoami',                      pause: 700 },
+            { cmd: 'pwd',                         pause: 600 },
+            { cmd: 'ls',                          pause: 1200 },
+            { cmd: 'cat secret_readme.txt',       pause: 2200 },
+            { cmd: 'cd pictures',                 pause: 500 },
+            { cmd: 'ls',                          pause: 1400 },
+            { cmd: 'cat readme.txt',              pause: 1800 },
+            { cmd: 'open alien_world.jpg',        pause: 2200 },
+            { cmd: 'cd ../secrets',               pause: 600 },
+            { cmd: 'ls',                          pause: 1500 },
+            { cmd: 'cat secret_readme.txt',       pause: 2000 },
+            { cmd: 'cat topsecret_materials.pdf', pause: 1400 },
+            { cmd: 'open ufo_photo.png',          pause: 2200 },
+            { cmd: 'ifconfig',                    pause: 1800 },
+            { cmd: 'lsblk',                       pause: 1500 },
+            { cmd: 'top',                         pause: 1800 },
+            { cmd: 'btop',                        pause: 7000, thenStop: true },
+            { cmd: 'mkdir exfil',                 pause: 500 },
+            { cmd: 'touch manifest.txt',          pause: 500 },
+            { cmd: 'mv manifest.txt exfil',       pause: 700 },
+            { cmd: 'ls exfil',                    pause: 1400 },
+            { cmd: 'echo they were here all along', pause: 1600 },
+            { cmd: 'rm -rf exfil',                pause: 900 },
+            { cmd: 'ls',                          pause: 1300 },
+            { cmd: 'cd /root',                    pause: 600 },
+            { cmd: 'ls',                          pause: 1400 },
+            { cmd: 'cat file1.txt',               pause: 1600 },
+            { cmd: 'cd',                          pause: 600 },
+            { cmd: '8bit',                        pause: 2000 },
+            { cmd: '8bit',                        pause: 600 },
+            { cmd: 'date',                        pause: 1200 },
+            { cmd: "ssh root@185.53.177.52 -p 22 -i id_rsa -o StrictHostKeyChecking=no -password '3treaE$1£'", pause: 1000 }
+        ];
+    }
+
+    async typeLine(input, line) {
+        for (const char of line) {
+            if (!autoRunning) return;
+            input.value += char;
+            // Space bars get a slightly longer beat, the way real typing does.
+            await sleep(char === ' ' ? randomBetween(90, 190) : randomBetween(35, 105));
+        }
+    }
+
+    runLine(line) {
+        const args = line.split(' ');
+        const entry = commands[line] || commands[args[0]];
+        if (!entry) return;
+        // Recorded like a real session, so 'history' afterwards shows the break-in.
+        pushHistory(line);
+        try {
+            entry.execute(args);
+        } catch (err) {
+            appendToOutput(`${args[0]}: ${err.message}`);
+        }
+    }
+
+    async execute() {
+        if (autoRunning) return; // never run two playbacks at once
+
+        const input = document.getElementById('command-input');
+        const commandContainer = document.getElementById('command-container');
+
+        // While the playback runs the keyboard belongs to us: Escape aborts,
+        // everything else is swallowed so stray keys can't fire a half-typed line.
+        const keyGuard = (event) => {
+            if (event.key === 'Escape') {
+                autoRunning = false;
+            }
+            event.preventDefault();
+            event.stopPropagation();
+        };
+
+        autoRunning = true;
+        input.readOnly = true;
+        document.addEventListener('keydown', keyGuard, true);
+
+        try {
+            for (const step of this.script) {
+                if (!autoRunning) break;
+
+                await this.typeLine(input, step.cmd);
+                if (!autoRunning) break;
+
+                await sleep(randomBetween(250, 500)); // beat before hitting enter
+                input.value = '';
+                this.runLine(step.cmd);
+                commandContainer.scrollIntoView(false);
+
+                await sleep(step.pause);
+
+                // Long-running screens (btop) need closing before moving on.
+                if (step.thenStop) stopBtop();
+            }
+
+            if (autoRunning) {
+                appendToOutput('\n-- connection closed --');
+            } else {
+                appendToOutput('\n-- aborted --');
+            }
+        } finally {
+            stopBtop(); // in case we aborted while a live screen was up
+            autoRunning = false;
+            input.readOnly = false;
+            input.value = '';
+            document.removeEventListener('keydown', keyGuard, true);
+            commandContainer.scrollIntoView(false);
+            input.focus();
+        }
+    }
+}
+
+// --- btop ------------------------------------------------------------------
+// A fake resource monitor. Everything is simulated with a random walk so the
+// numbers drift like real load instead of jumping around.
+
+const SPARK = '▁▂▃▄▅▆▇█';
+const BAR_FULL = '█';
+const BAR_EMPTY = '░';
+
+
+let btopTimer = null;
+let btopKeyHandler = null;
+let btopState = null;
+
+function loadColor(percent) {
+    if (percent < 40) return COLOR_LOW;
+    if (percent < 75) return COLOR_MID;
+    return COLOR_HIGH;
+}
+
+// Nudge a value around without letting it escape its range.
+function drift(value, min, max, step) {
+    const next = value + (Math.random() - 0.5) * step;
+    return Math.max(min, Math.min(max, next));
+}
+
+// Two parts, so the unused portion stays dim instead of taking the load colour.
+function barParts(percent, width, color) {
+    const filled = Math.round((percent / 100) * width);
+    return [
+        [BAR_FULL.repeat(filled), color],
+        [BAR_EMPTY.repeat(Math.max(0, width - filled)), COLOR_TRACK]
+    ];
+}
+
+function sparkline(values) {
+    return values
+        .map(value => SPARK[Math.max(0, Math.min(7, Math.floor(value / 12.6)))])
+        .join('');
+}
+
+function partsWidth(parts) {
+    return parts.reduce((total, part) => total + part[0].length, 0);
+}
+
+// Pad a row of [text, color] pairs out to an exact column count.
+function padParts(parts, width) {
+    const gap = width - partsWidth(parts);
+    return gap > 0 ? parts.concat([[' '.repeat(gap), null]]) : parts;
+}
+
+// Wrap rows in a titled box. Each row is an array of [text, color] pairs.
+function box(title, innerWidth, rows) {
+    const heading = `╭─ ${title} `;
+    const lines = [];
+
+    lines.push([
+        [heading + '─'.repeat(Math.max(0, innerWidth + 2 - heading.length + 1)) + '╮', COLOR_FRAME]
+    ]);
+
+    for (const row of rows) {
+        lines.push([['│ ', COLOR_FRAME]].concat(padParts(row, innerWidth)).concat([[' │', COLOR_FRAME]]));
+    }
+
+    lines.push([['╰' + '─'.repeat(innerWidth + 2) + '╯', COLOR_FRAME]]);
+    return lines;
+}
+
+// Glue two boxes together column-wise so they sit next to each other.
+function sideBySide(leftLines, rightLines) {
+    const height = Math.max(leftLines.length, rightLines.length);
+    const leftWidth = partsWidth(leftLines[0]);
+    const merged = [];
+
+    for (let i = 0; i < height; i++) {
+        const left = leftLines[i] ? padParts(leftLines[i], leftWidth) : [[' '.repeat(leftWidth), null]];
+        const right = rightLines[i] || [];
+        merged.push(left.concat(right));
+    }
+    return merged;
+}
+
+function formatUptime(seconds) {
+    const pad = n => String(Math.floor(n)).padStart(2, '0');
+    return `${pad(seconds / 3600)}:${pad((seconds % 3600) / 60)}:${pad(seconds % 60)}`;
+}
+
+function createBtopState() {
+    const processNames = [
+        ['garmd',           'root'],
+        ['gnipa-watch',     'root'],
+        ['systemd',         'root'],
+        ['sshd',            'root'],
+        ['telemetry-relay', 'daemon'],
+        ['hel-indexer',     'root'],
+        ['nginx',           'www'],
+        ['archive-sync',    'nobody'],
+        ['ufo-classifier',  'root'],
+        ['postgres',        'postgres'],
+        ['containerd',      'root'],
+        ['node_exporter',   'prom']
+    ];
+
+    return {
+        cores: Array.from({ length: 8 }, () => 5 + Math.random() * 60),
+        cpuHistory: Array.from({ length: 68 }, () => 20 + Math.random() * 40),
+        netDownHistory: Array.from({ length: 34 }, () => Math.random() * 60),
+        freq: 3.4,
+        temp: 48,
+        memUsed: 6.2,
+        memCache: 2.1,
+        swap: 0.3,
+        netDown: 1.2,
+        netUp: 0.34,
+        uptime: 51727,
+        processes: processNames.map(([name, user], index) => ({
+            pid: 1337 + index * 97,
+            name,
+            user,
+            cpu: Math.random() * 35,
+            mem: 0.4 + Math.random() * 6,
+            time: 40 + Math.random() * 4000
+        }))
+    };
+}
+
+function tickBtopState(state) {
+    state.cores = state.cores.map(core => drift(core, 0, 100, 26));
+    const average = state.cores.reduce((sum, core) => sum + core, 0) / state.cores.length;
+
+    state.cpuHistory.push(average);
+    state.cpuHistory.shift();
+
+    state.freq = drift(state.freq, 1.2, 4.8, 0.5);
+    state.temp = drift(state.temp, 38, 88, 3);
+    state.memUsed = drift(state.memUsed, 3.5, 14.5, 0.5);
+    state.memCache = drift(state.memCache, 0.8, 5.0, 0.3);
+    state.swap = drift(state.swap, 0, 2.5, 0.15);
+    state.netDown = drift(state.netDown, 0.05, 12, 2.2);
+    state.netUp = drift(state.netUp, 0.02, 4, 0.8);
+    state.uptime += 1;
+
+    state.netDownHistory.push((state.netDown / 12) * 100);
+    state.netDownHistory.shift();
+
+    for (const process of state.processes) {
+        process.cpu = drift(process.cpu, 0, 60, 12);
+        process.mem = drift(process.mem, 0.2, 12, 0.6);
+        process.time += 1;
+    }
+    state.processes.sort((a, b) => b.cpu - a.cpu);
+}
+
+function renderBtop(state) {
+    const TOTAL_MEM = 16;
+    const average = state.cores.reduce((sum, core) => sum + core, 0) / state.cores.length;
+
+    // --- cpu box ---
+    const cpuRows = [];
+    cpuRows.push([[sparkline(state.cpuHistory), loadColor(average)]]);
+    cpuRows.push([
+        ['CPU  ', COLOR_LABEL],
+        ...barParts(average, 28, loadColor(average)),
+        [`${String(Math.round(average)).padStart(4)}%`, loadColor(average)],
+        [`   ${state.freq.toFixed(1)} GHz`, null],
+        [`   ${Math.round(state.temp)}°C`, loadColor((state.temp - 38) * 2)],
+        [`   up ${formatUptime(state.uptime)}`, COLOR_LABEL]
+    ]);
+    state.cores.forEach((core, index) => {
+        cpuRows.push([
+            [`C${index}   `, COLOR_LABEL],
+            ...barParts(core, 28, loadColor(core)),
+            [`${String(Math.round(core)).padStart(4)}%`, loadColor(core)]
+        ]);
+    });
+
+    // --- mem box ---
+    const memRows = [
+        [
+            ['Used   ', COLOR_LABEL],
+            ...barParts((state.memUsed / TOTAL_MEM) * 100, 16, loadColor((state.memUsed / TOTAL_MEM) * 100)),
+            [`  ${state.memUsed.toFixed(2)} GiB`, null]
+        ],
+        [
+            ['Cache  ', COLOR_LABEL],
+            ...barParts((state.memCache / TOTAL_MEM) * 100, 16, COLOR_LOW),
+            [`  ${state.memCache.toFixed(2)} GiB`, null]
+        ],
+        [
+            ['Swap   ', COLOR_LABEL],
+            ...barParts((state.swap / 4) * 100, 16, state.swap > 1 ? COLOR_MID : COLOR_LOW),
+            [`  ${state.swap.toFixed(2)} GiB`, null]
+        ],
+        [
+            ['Free   ', COLOR_LABEL],
+            ...barParts(((TOTAL_MEM - state.memUsed - state.memCache) / TOTAL_MEM) * 100, 16, COLOR_LOW),
+            [`  ${(TOTAL_MEM - state.memUsed - state.memCache).toFixed(2)} GiB`, null]
+        ]
+    ];
+
+    // --- net box ---
+    const netRows = [
+        [
+            ['▼ ', COLOR_LOW],
+            [`${state.netDown.toFixed(2)} MiB/s`, COLOR_LOW],
+            ['    ▲ ', COLOR_MID],
+            [`${state.netUp.toFixed(2)} MiB/s`, COLOR_MID]
+        ],
+        [[sparkline(state.netDownHistory), COLOR_LOW]],
+        [['eth0   185.53.177.52', COLOR_LABEL]],
+        [['wlan0  down', COLOR_LABEL]]
+    ];
+
+    // --- proc box ---
+    const procRows = [[
+        ['  PID  PROGRAM           USER        CPU%    MEM%   TIME+', COLOR_LABEL]
+    ]];
+    for (const process of state.processes.slice(0, 9)) {
+        procRows.push([
+            [String(process.pid).padStart(5), null],
+            ['  ' + process.name.padEnd(17), null],
+            [process.user.padEnd(10), COLOR_LABEL],
+            [String(process.cpu.toFixed(1)).padStart(5), loadColor(process.cpu)],
+            [String(process.mem.toFixed(1)).padStart(8), null],
+            ['   ' + formatUptime(process.time), COLOR_LABEL]
+        ]);
+    }
+
+    return []
+        .concat(box('cpu', 74, cpuRows))
+        .concat(sideBySide(box('mem', 34, memRows), box('net', 36, netRows)))
+        .concat(box('proc', 74, procRows))
+        .concat([[['  esc / q  quit', COLOR_LABEL]]]);
+}
+
+export function stopBtop() {
+    if (btopTimer) {
+        clearInterval(btopTimer);
+        btopTimer = null;
+    }
+    if (btopKeyHandler) {
+        document.removeEventListener('keydown', btopKeyHandler, true);
+        btopKeyHandler = null;
+    }
+    btopState = null;
+}
+
+export class BtopCommand {
+    constructor() {
+        this.name = "btop";
+    }
+
+    execute() {
+        echoCommand('btop');
+        if (btopTimer) return; // already running
+
+        const screen = document.createElement('pre');
+        screen.style.margin = '8px 0';
+        screen.style.lineHeight = '1.35';
+        output.appendChild(screen);
+
+        btopState = createBtopState();
+
+        const paint = () => {
+            screen.textContent = '';
+            for (const line of renderBtop(btopState)) {
+                for (const [text, color] of line) {
+                    const piece = document.createElement('span');
+                    piece.textContent = text;
+                    if (color) piece.style.color = color;
+                    screen.appendChild(piece);
+                }
+                screen.appendChild(document.createTextNode('\n'));
+            }
+        };
+
+        paint();
+
+        // q or escape quits, the way the real thing does. 'q' only counts when
+        // the prompt is empty, so it doesn't get eaten out of a command you
+        // are part way through typing.
+        btopKeyHandler = (event) => {
+            const promptIsEmpty = document.getElementById('command-input').value.length === 0;
+            const quitKey = event.key === 'Escape'
+                || ((event.key === 'q' || event.key === 'Q') && promptIsEmpty);
+            if (!quitKey) return;
+            event.preventDefault();
+            event.stopPropagation();
+            stopBtop();
+        };
+        document.addEventListener('keydown', btopKeyHandler, true);
+
+        btopTimer = setInterval(() => {
+            tickBtopState(btopState);
+            paint();
+        }, 1000);
+    }
+}
+
 export const commands = {
+    auto: new AutoCommand(),
+    btop: new BtopCommand(),
     ls: new LsCommand(),
     cat: new CatCommand(),
     cd: new CdCommand(),

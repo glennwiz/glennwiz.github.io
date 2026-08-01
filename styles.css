@@ -19,6 +19,13 @@ h1 {
   margin-bottom: 10px;
 }
 
+/* Hidden up front so they never flash before the script runs.
+   The git/code commands toggle them back on. */
+.terminal,
+.codeblock {
+  display: none;
+}
+
 .terminal {
   background: #202020;
   border-radius: 5px;
@@ -102,12 +109,25 @@ h1 {
   font-weight: bold;
 }
 
+/* Own block formatting context so the input can take the rest of the line
+   next to the floated prompt instead of the default ~20 character box. */
+#command-container {
+  overflow: hidden;
+}
+
 #command-input {
   background-color: #000;
   color: #ff0;
   border: none;
   outline: none;
   padding-top: 10px;
+  /* Inputs don't inherit the body font, so without this the typed command
+     renders in the browser default and doesn't line up with the prompt. */
+  font-family: "Courier New", Courier, monospace;
+  font-size: 1em;
+  margin-left: 8px;
+  box-sizing: border-box;
+  width: calc(100% - 8px);
 }
 
 #ascii-container {
