@@ -1,4 +1,4 @@
-﻿import { commands, pushHistory, getHistory, getCompletions, printCompletions } from './commands.js';
+﻿import { commands, pushHistory, getHistory, getCompletions, printCompletions, isDestructive, runMayhem } from './commands.js';
 
 const commandInput = document.getElementById('command-input');
 const outputContainer = document.getElementById('output-container');
@@ -46,6 +46,16 @@ commandInput.addEventListener('keydown', function(event) {
         historyIndex = -1;
         draft = '';
         pushHistory(raw);
+
+        // Anything that would destroy a real machine gets the meltdown instead
+        // of running. Checked before lookup so 'format', 'dd', 'mkfs' and
+        // friends are covered without needing a command each.
+        if (isDestructive(raw)) {
+            runMayhem(raw);
+            commandInput.focus();
+            commandContainer.scrollIntoView(false);
+            return;
+        }
 
         // Exact-match full-line commands first (e.g., the special ssh line)
         if (raw in commands) {
